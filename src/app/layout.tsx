@@ -5,22 +5,18 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "Content Creation on Steroids",
-  description: "A platform for creating content on steroids",
+	title: "Content Creation on Steroids",
+	description: "A platform for creating content on steroids",
 };
 
 export default function RootLayout({
-  children,
+	children,
 }: Readonly<{
-  children: React.ReactNode;
+	children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body
-        className={`${inter.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
-  );
+	return (
+		<html lang="en">
+			<body className={`${inter.variable} antialiased`}>{children}</body>
+		</html>
+	);
 }
