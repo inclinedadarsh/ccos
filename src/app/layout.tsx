@@ -1,9 +1,18 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Space_Grotesk } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const clashGrotesk = localFont({
+	src: "./fonts/ClashGrotesk-Variable.woff2",
+	variable: "--font-sans",
+});
+
+const spaceGrotesk = Space_Grotesk({
+	subsets: ["latin"],
+	variable: "--font-mono",
+});
 
 export const metadata: Metadata = {
 	title: "Content Creation on Steroids",
@@ -17,7 +26,9 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className={`${inter.variable} font-sans antialiased`}>
+			<body
+				className={`${clashGrotesk.variable} ${spaceGrotesk.variable} font-sans antialiased`}
+			>
 				{children}
 				<Toaster richColors theme="light" />
 			</body>
