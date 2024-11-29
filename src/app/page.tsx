@@ -3,16 +3,20 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAtom } from "jotai";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { youtubeLinkAtom } from "./states";
 
 export default function Home() {
+	const router = useRouter();
 	const [youtubeLink, setYoutubeLink] = useAtom(youtubeLinkAtom);
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		if (isValidYoutubeLink(youtubeLink)) {
 			toast.success("Valid YouTube link submitted!");
+			const encodedUrl = encodeURIComponent(youtubeLink);
+			router.push(`/dashboard/video?url=${encodedUrl}`);
 		} else {
 			toast.error("Please enter a valid YouTube link");
 		}
