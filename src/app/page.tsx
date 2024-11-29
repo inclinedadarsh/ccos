@@ -1,8 +1,10 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { HeroHighlight, Highlight } from "@/components/ui/hero-highlight";
 import { Input } from "@/components/ui/input";
 import { ViewContainer } from "@/components/ui/view-container";
+import { motion } from "framer-motion";
 import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -30,18 +32,61 @@ export default function Home() {
 	};
 
 	return (
-		<ViewContainer>
-			<div className="min-h-screen space-y-10 mt-36">
-				<h1 className="text-4xl md:text-6xl font-medium max-w-4xl mx-auto text-center">
+		<HeroHighlight className="">
+			<ViewContainer className="space-y-10">
+				<motion.h1
+					initial={{
+						opacity: 0,
+						y: 20,
+					}}
+					animate={{
+						opacity: 1,
+						y: [20, -5, 0],
+					}}
+					transition={{
+						duration: 0.5,
+						delay: 0.1,
+						ease: [0.4, 0.0, 0.2, 1],
+					}}
+					className="text-4xl md:text-6xl font-medium max-w-4xl mx-auto text-center"
+				>
 					Turn Your Videos into{" "}
-					<span className="text-blue-600 font-mono">Endless</span>{" "}
+					<Highlight className="font-mono">Endless</Highlight>{" "}
 					Marketing Assets
-				</h1>
-				<p className="text-lg md:text-xl text-center max-w-2xl mx-auto">
+				</motion.h1>
+				<motion.p
+					initial={{
+						opacity: 0,
+						y: 20,
+					}}
+					animate={{
+						opacity: 1,
+						y: [20, -5, 0],
+					}}
+					transition={{
+						duration: 0.5,
+						delay: 0.2,
+						ease: [0.4, 0.0, 0.2, 1],
+					}}
+					className="text-lg md:text-xl text-center max-w-2xl mx-auto"
+				>
 					We generate a lot of content like blogs, tweets, and other
 					stuff using your YouTube video.
-				</p>
-				<form
+				</motion.p>
+				<motion.form
+					initial={{
+						opacity: 0,
+						y: 20,
+					}}
+					animate={{
+						opacity: 1,
+						y: [20, -5, 0],
+					}}
+					transition={{
+						duration: 0.5,
+						delay: 0.3,
+						ease: [0.4, 0.0, 0.2, 1],
+					}}
 					onSubmit={handleSubmit}
 					className="w-full max-w-md mx-auto"
 				>
@@ -57,8 +102,8 @@ export default function Home() {
 							Generate Content
 						</Button>
 					</div>
-				</form>
-			</div>
-		</ViewContainer>
+				</motion.form>
+			</ViewContainer>
+		</HeroHighlight>
 	);
 }
