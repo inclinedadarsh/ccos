@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { CardSpotlight } from "@/components/ui/card-spotlight";
 import { HeroHighlight, Highlight } from "@/components/ui/hero-highlight";
 import { Input } from "@/components/ui/input";
 import { ViewContainer } from "@/components/ui/view-container";
@@ -128,20 +127,7 @@ export default function Home() {
 			</HeroHighlight>
 			<ViewContainer>
 				<h2 className="text-2xl font-medium">What all can you do?</h2>
-				<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-					{features.map(feature => (
-						<CardSpotlight
-							key={feature.title}
-							className="p-4 border rounded-lg"
-						>
-							<feature.icon className="w-10 h-10" />
-							<h3 className="text-lg font-medium">
-								{feature.title}
-							</h3>
-							<p>{feature.description}</p>
-						</CardSpotlight>
-					))}
-				</div>
+				<div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-white"></div>
 			</ViewContainer>
 		</main>
 	);
