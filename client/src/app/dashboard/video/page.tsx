@@ -292,6 +292,53 @@ export default function VideoPage() {
 						</div>
 					</div>
 				</div>
+
+				<div className="space-y-8">
+					<div className="bg-white rounded-lg shadow-lg p-6 border border-border">
+						<div className="flex items-center justify-between mb-4">
+							<div className="flex items-center gap-2">
+								<SiYoutube size={20} className="text-red-600" />
+								<h2 className="text-xl font-medium">
+									AI generated Blog Post based on the video
+								</h2>
+							</div>
+							<Link
+								href="/signup"
+								className={cn(
+									buttonVariants({ variant: "default" }),
+									"flex items-center gap-2",
+								)}
+							>
+								Create account to unlock
+							</Link>
+						</div>
+						<div className="relative">
+							{/* Blurred content */}
+							<div className="space-y-4 bg-gray-50 p-6 border-border border-2 border-dashed rounded-md  cursor-default">
+								<p className="text-gray-800 leading-relaxed blur-[6px] pointer-events-none">
+									Lorem ipsum dolor sit amet consectetur
+									adipisicing elit. At temporibus minus rem
+									reiciendis magni porro. Est qui ratione
+									quidem fugit? Hic autem sequi officia porro
+									recusandae ab. Labore, nostrum perferendis.
+								</p>
+								<p className="text-gray-800 leading-relaxed blur-[6px] pointer-events-none">
+									Lorem ipsum dolor sit amet, consectetur
+									adipisicing elit. Ipsum iste sint tempore
+									illum excepturi sit veniam consectetur,
+									asperiores recusandae dignissimos beatae
+									architecto ipsa aliquam cum fugit adipisci
+									totam accusamus? Ipsum vero delectus saepe,
+									ad atque libero pariatur eveniet excepturi?
+									Tempore officia quasi, maiores amet
+									consectetur aut, vero voluptates beatae
+									fugiat veniam harum labore error et commodi
+									laudantium voluptas repellat debitis?
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	);
