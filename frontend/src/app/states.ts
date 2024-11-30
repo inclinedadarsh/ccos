@@ -17,10 +17,12 @@ export const videoDataAtom = atom<{
 // Tweet-related atoms
 export const tweetAtom = atom<string>("");
 export const tweetLoadingAtom = atom(true);
+export const originalTweetAtom = atom<string>("");
 
 // LinkedIn-related atoms
 export const linkedinPostAtom = atom<string>("");
 export const linkedinLoadingAtom = atom(true);
+export const originalLinkedinPostAtom = atom<string>("");
 
 // YouTube link atom (used in the home page)
 export const youtubeLinkAtom = atom("");
