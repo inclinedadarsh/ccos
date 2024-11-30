@@ -8,7 +8,7 @@
 		"start": "next start",
 		"lint": "biome check",
 		"lint:fix": "biome check --write",
-		"prepare": "husky"
+		"prepare": "cd .. && husky client/.husky"
 	},
 	"dependencies": {
 		"@icons-pack/react-simple-icons": "^10.2.0",
