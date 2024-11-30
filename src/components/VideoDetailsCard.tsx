@@ -1,6 +1,7 @@
 import { SiYoutube } from "@icons-pack/react-simple-icons";
 import { Calendar, Eye, ThumbsUp } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 interface VideoDetailsCardProps {
 	thumbnail: string;
@@ -37,51 +38,52 @@ export function VideoDetailsCard({
 						height={1000}
 					/>
 				</div>
-				<div className="w-full lg:w-1/2 p-6">
+				<div className="w-full lg:w-1/2 p-6 space-y-6">
 					<div className="flex items-center gap-2 mb-4">
-						<SiYoutube size={20} className="text-red-600" />
-						<h2 className="text-xl font-medium">
-							<a
+						<h2 className="text-xl md:text-2xl font-semibold">
+							<Link
 								href={link}
 								target="_blank"
 								rel="noopener noreferrer"
-								className="hover:text-blue-600 hover:underline"
+								className="hover:text-blue-600 underline"
 							>
 								{title}
-							</a>
+							</Link>
 						</h2>
 					</div>
 
 					<div className="space-y-4 text-gray-600">
-						<div className="flex items-center gap-3">
-							<img
-								src={channelImage}
-								alt={channelName}
-								className="w-10 h-10 rounded-full"
-							/>
-							<a
-								href={channelUrl}
-								target="_blank"
-								rel="noopener noreferrer"
-								className="text-blue-600 hover:underline"
-							>
-								{channelName}
-							</a>
-						</div>
-						<div className="flex flex-wrap gap-4 text-sm">
+						<div className="flex flex-wrap gap-4">
 							<span className="flex items-center gap-2">
-								<Calendar className="w-4 h-4" />
+								<Calendar size={20} />
 								{new Date(uploadDate).toLocaleDateString()}
 							</span>
 							<span className="flex items-center gap-2">
-								<Eye className="w-4 h-4" />
+								<Eye size={20} />
 								{viewCount.toLocaleString()} views
 							</span>
 							<span className="flex items-center gap-2">
-								<ThumbsUp className="w-4 h-4" />
+								<ThumbsUp size={20} />
 								{likes.toLocaleString()} likes
 							</span>
 						</div>
+					</div>
+					<div className="flex items-center gap-3">
+						<Image
+							src={channelImage}
+							alt={channelName}
+							className="w-8 h-8 rounded-full"
+							width={100}
+							height={100}
+						/>
+						<Link
+							href={channelUrl}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="text-lg font-medium text-black hover:text-blue-600 hover:underline"
+						>
+							{channelName}
+						</Link>
 					</div>
 				</div>
 			</div>

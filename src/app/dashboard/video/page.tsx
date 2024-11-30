@@ -9,9 +9,11 @@ import {
 	videoLoadingAtom,
 } from "@/app/states";
 import { VideoDetailsCard } from "@/components/VideoDetailsCard";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { SiLinkedin, SiX, SiYoutube } from "@icons-pack/react-simple-icons";
 import { useAtom } from "jotai";
-import { Calendar, Eye, Loader2, ThumbsUp } from "lucide-react";
+import { Calendar, Check, Copy, Eye, Loader2, ThumbsUp } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
@@ -19,6 +21,10 @@ import { toast } from "sonner";
 
 const createTwitterIntent = (text: string) => {
 	return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+};
+
+const createLinkedInIntent = (text: string) => {
+	return `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(text)}`;
 };
 
 // Add this interface for type safety
@@ -118,6 +124,25 @@ export default function VideoPage() {
 		fetchLinkedinPost();
 	}, [setLinkedinPost, setIsLoadingLinkedin]);
 
+	const copyToClipboard = async (
+		text: string,
+		event: React.MouseEvent<HTMLButtonElement>,
+	) => {
+		const button = event.currentTarget;
+		const originalContent = button.innerHTML;
+
+		try {
+			await navigator.clipboard.writeText(text);
+			button.innerHTML = `<div class="flex items-center gap-2"><svg class="w-4 h-4" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Copied</div>`;
+
+			setTimeout(() => {
+				button.innerHTML = originalContent;
+			}, 2000);
+		} catch (err) {
+			toast.error("Failed to copy to clipboard");
+		}
+	};
+
 	if (loading) {
 		return (
 			<div className="min-h-screen flex items-center justify-center">
@@ -138,80 +163,133 @@ export default function VideoPage() {
 
 	return (
 		<div className="min-h-screen p-8">
-			<div className="max-w-6xl mx-auto space-y-8">
-				<h1 className="text-2xl font-medium">Video Details</h1>
+			<div className="max-w-6xl mx-auto space-y-12">
+				<div className="space-y-8">
+					<h1 className="text-3xl font-semibold">Video Details</h1>
+					<VideoDetailsCard
+						thumbnail={videoData.thumbnail}
+						title={videoData.title}
+						link={videoData.link}
+						channelImage={videoData.channelImage}
+						channelName={videoData.channelName}
+						channelUrl={videoData.channelUrl}
+						uploadDate={videoData.uploadDate}
+						viewCount={videoData.viewCount}
+						likes={videoData.likes}
+					/>
+				</div>
 
-				<VideoDetailsCard
-					thumbnail={videoData.thumbnail}
-					title={videoData.title}
-					link={videoData.link}
-					channelImage={videoData.channelImage}
-					channelName={videoData.channelName}
-					channelUrl={videoData.channelUrl}
-					uploadDate={videoData.uploadDate}
-					viewCount={videoData.viewCount}
-					likes={videoData.likes}
-				/>
-
-				<h1 className="text-2xl font-medium pt-4">Generated Content</h1>
-
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-					<div className="bg-white rounded-lg shadow-lg p-6 border border-border">
-						<div className="flex items-center gap-2 mb-4">
-							<SiX size={20} className=" text-[#1DA1F2]" />
-							<h2 className="text-xl font-medium">
-								Generated Tweet
-							</h2>
-						</div>
-						{isLoadingTweet ? (
-							<div className="flex flex-col items-center justify-center py-8">
-								<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4" />
-								<p className="text-gray-600 text-center">
-									Hang on tight, we're generating a tweet for
-									you...
-								</p>
+				<div className="space-y-8">
+					<h1 className="text-3xl font-semibold">
+						Generated Content
+					</h1>
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+						<div className="bg-white rounded-lg shadow-lg p-6 border border-border flex flex-col">
+							<div className="flex items-center gap-2 mb-4">
+								<SiX size={20} className="" />
+								<h2 className="text-xl font-medium">
+									Generated Tweet
+								</h2>
 							</div>
-						) : (
-							<div className="bg-gray-50 p-4 rounded-md">
-								<p className="text-gray-800 whitespace-pre-line">
-									{tweet}
-								</p>
-								<div className="mt-4">
-									<Link
-										href={createTwitterIntent(tweet)}
-										target="_blank"
-										rel="noopener noreferrer"
-										className="inline-flex items-center px-4 py-2 bg-[#1DA1F2] text-white rounded-md hover:bg-[#1a8cd8] transition-colors"
-									>
-										<SiX />
-										Tweet This
-									</Link>
+							{isLoadingTweet ? (
+								<div className="flex flex-col items-center justify-center py-8">
+									<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4" />
+									<p className="text-gray-600 text-center">
+										Hang on tight, we're generating a tweet
+										for you...
+									</p>
 								</div>
-							</div>
-						)}
-					</div>
-
-					<div className="bg-white rounded-lg shadow-lg p-6 border border-border">
-						<div className="flex items-center gap-2 mb-4">
-							<SiLinkedin size={20} className=" text-[#0A66C2]" />
-							<h2 className="text-xl font-medium">
-								Generated LinkedIn Post
-							</h2>
+							) : (
+								<div className="flex flex-col flex-1">
+									<div className="bg-gray-50 p-4 border-border border-2 border-dashed rounded-md flex-1">
+										<p className="text-gray-800 whitespace-pre-line">
+											{tweet}
+										</p>
+									</div>
+									<div className="mt-6 grid grid-cols-2 gap-3">
+										<Link
+											href={createTwitterIntent(tweet)}
+											target="_blank"
+											rel="noopener noreferrer"
+											className={cn(
+												buttonVariants({
+													variant: "outline",
+												}),
+												"flex items-center gap-2 justify-center",
+											)}
+										>
+											<SiX />
+											Post on X
+										</Link>
+										<Button
+											variant="outline"
+											className="flex items-center gap-2 justify-center"
+											onClick={e =>
+												copyToClipboard(tweet, e)
+											}
+										>
+											<Copy className="w-4 h-4" />
+											Copy to clipboard
+										</Button>
+									</div>
+								</div>
+							)}
 						</div>
-						{isLoadingLinkedin ? (
-							<div className="flex flex-col items-center justify-center py-8">
-								<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4" />
-								<p className="text-gray-600 text-center">
-									Crafting a professional LinkedIn post...
-								</p>
+						<div className="bg-white rounded-lg shadow-lg p-6 border border-border flex flex-col">
+							<div className="flex items-center gap-2 mb-4">
+								<SiLinkedin
+									size={20}
+									className=" text-[#0A66C2]"
+								/>
+								<h2 className="text-xl font-medium">
+									Generated LinkedIn Post
+								</h2>
 							</div>
-						) : (
-							<div className="bg-gray-50 p-4 rounded-md">
-								<p className="text-gray-800 whitespace-pre-line">
-									{linkedinPost}
-								</p>
-							</div>
-						)}
+							{isLoadingLinkedin ? (
+								<div className="flex flex-col items-center justify-center py-8">
+									<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4" />
+									<p className="text-gray-600 text-center">
+										Crafting a professional LinkedIn post...
+									</p>
+								</div>
+							) : (
+								<div className="flex flex-col flex-1">
+									<div className="bg-gray-50 p-4 border-border border-2 border-dashed rounded-md flex-1">
+										<p className="text-gray-800 whitespace-pre-line">
+											{linkedinPost}
+										</p>
+									</div>
+									<div className="mt-6 grid grid-cols-2 gap-3">
+										<Link
+											href={createLinkedInIntent(
+												linkedinPost,
+											)}
+											target="_blank"
+											rel="noopener noreferrer"
+											className={cn(
+												buttonVariants({
+													variant: "outline",
+												}),
+												"flex items-center gap-2 justify-center",
+											)}
+										>
+											<SiLinkedin />
+											Post on LinkedIn
+										</Link>
+										<Button
+											variant="outline"
+											className="flex items-center gap-2 justify-center"
+											onClick={e =>
+												copyToClipboard(linkedinPost, e)
+											}
+										>
+											<Copy className="w-4 h-4" />
+											Copy to clipboard
+										</Button>
+									</div>
+								</div>
+							)}
+						</div>
 					</div>
 				</div>
 			</div>
