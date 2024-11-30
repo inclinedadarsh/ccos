@@ -8,8 +8,12 @@ import {
 	videoDataAtom,
 	videoLoadingAtom,
 } from "@/app/states";
+import { VideoDetailsCard } from "@/components/VideoDetailsCard";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { SiLinkedin, SiX, SiYoutube } from "@icons-pack/react-simple-icons";
 import { useAtom } from "jotai";
-import { Loader2 } from "lucide-react";
+import { Calendar, Check, Copy, Eye, Loader2, ThumbsUp } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
@@ -18,6 +22,25 @@ import { toast } from "sonner";
 const createTwitterIntent = (text: string) => {
 	return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
 };
+
+const createLinkedInIntent = (text: string) => {
+	return `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(text)}`;
+};
+
+// Add this interface for type safety
+interface VideoStats {
+	title: string;
+	link: string;
+	thumbnailUrl: string;
+	likes: string;
+	views: string;
+	channel: {
+		name: string;
+		link: string;
+		imageUrl: string;
+	};
+	publishDate: string;
+}
 
 export default function VideoPage() {
 	const searchParams = useSearchParams();
@@ -38,20 +61,26 @@ export default function VideoPage() {
 			}
 
 			try {
-				const response = await fetch("/api/youtube", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ url: decodeURIComponent(url) }),
-				});
+				const response = await fetch(
+					`http://20.244.84.131:3000/get_video_stats?video_link=${encodeURIComponent(url)}`,
+				);
 
 				if (!response.ok) {
 					throw new Error("Failed to fetch video data");
 				}
 
-				const data = await response.json();
-				setVideoData(data);
+				const data: VideoStats = await response.json();
+				setVideoData({
+					title: data.title,
+					link: data.link,
+					thumbnail: data.thumbnailUrl,
+					channelName: data.channel.name,
+					channelUrl: data.channel.link,
+					channelImage: data.channel.imageUrl,
+					viewCount: Number.parseInt(data.views),
+					likes: Number.parseInt(data.likes),
+					uploadDate: data.publishDate,
+				});
 			} catch (error) {
 				console.error("Error:", error);
 				toast.error("Failed to fetch video information");
@@ -95,6 +124,25 @@ export default function VideoPage() {
 		fetchLinkedinPost();
 	}, [setLinkedinPost, setIsLoadingLinkedin]);
 
+	const copyToClipboard = async (
+		text: string,
+		event: React.MouseEvent<HTMLButtonElement>,
+	) => {
+		const button = event.currentTarget;
+		const originalContent = button.innerHTML;
+
+		try {
+			await navigator.clipboard.writeText(text);
+			button.innerHTML = `<div class="flex items-center gap-2"><svg class="w-4 h-4" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Copied</div>`;
+
+			setTimeout(() => {
+				button.innerHTML = originalContent;
+			}, 2000);
+		} catch (err) {
+			toast.error("Failed to copy to clipboard");
+		}
+	};
+
 	if (loading) {
 		return (
 			<div className="min-h-screen flex items-center justify-center">
@@ -115,119 +163,133 @@ export default function VideoPage() {
 
 	return (
 		<div className="min-h-screen p-8">
-			<div className="max-w-6xl mx-auto space-y-6">
-				<div className="bg-white rounded-lg shadow-lg overflow-hidden">
-					<div className="flex">
-						<div className="w-1/3 flex-shrink-0">
-							<img
-								src={videoData.thumbnail}
-								alt={videoData.title}
-								className="w-full h-full object-cover"
-							/>
-						</div>
-						<div className="w-2/3 p-6">
-							<h1 className="text-2xl font-bold mb-2">
-								{videoData.title}
-							</h1>
-
-							<div className="mb-3 text-gray-600">
-								<a
-									href={videoData.channelUrl}
-									target="_blank"
-									rel="noopener noreferrer"
-									className="text-blue-600 hover:underline"
-								>
-									{videoData.channelName}
-								</a>
-								<div className="flex gap-3 mt-1 text-sm">
-									<span>
-										{new Date(
-											videoData.uploadDate,
-										).toLocaleDateString()}
-									</span>
-									<span>
-										{videoData.viewCount.toLocaleString()}{" "}
-										views
-									</span>
-									<span>
-										{Math.floor(videoData.duration / 60)}:
-										{(videoData.duration % 60)
-											.toString()
-											.padStart(2, "0")}
-									</span>
-								</div>
-							</div>
-
-							<div className="mt-4">
-								<h2 className="text-lg font-semibold mb-1">
-									Description
-								</h2>
-								<p className="text-gray-700 whitespace-pre-wrap text-sm">
-									{videoData.description}
-								</p>
-							</div>
-						</div>
-					</div>
+			<div className="max-w-6xl mx-auto space-y-12">
+				<div className="space-y-8">
+					<h1 className="text-3xl font-semibold">Video Details</h1>
+					<VideoDetailsCard
+						thumbnail={videoData.thumbnail}
+						title={videoData.title}
+						link={videoData.link}
+						channelImage={videoData.channelImage}
+						channelName={videoData.channelName}
+						channelUrl={videoData.channelUrl}
+						uploadDate={videoData.uploadDate}
+						viewCount={videoData.viewCount}
+						likes={videoData.likes}
+					/>
 				</div>
 
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-					<div className="bg-white rounded-lg shadow-lg p-6">
-						<h2 className="text-xl font-bold mb-4">
-							Generated Tweet
-						</h2>
-						{isLoadingTweet ? (
-							<div className="flex flex-col items-center justify-center py-8">
-								<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4" />
-								<p className="text-gray-600 text-center">
-									Hang on tight, we're generating a tweet for
-									you...
-								</p>
+				<div className="space-y-8">
+					<h1 className="text-3xl font-semibold">
+						Generated Content
+					</h1>
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+						<div className="bg-white rounded-lg shadow-lg p-6 border border-border flex flex-col">
+							<div className="flex items-center gap-2 mb-4">
+								<SiX size={20} className="" />
+								<h2 className="text-xl font-medium">
+									Generated Tweet
+								</h2>
 							</div>
-						) : (
-							<div className="bg-gray-50 p-4 rounded-md">
-								<p className="text-gray-800 whitespace-pre-line">
-									{tweet}
-								</p>
-								<div className="mt-4">
-									<Link
-										href={createTwitterIntent(tweet)}
-										target="_blank"
-										rel="noopener noreferrer"
-										className="inline-flex items-center px-4 py-2 bg-[#1DA1F2] text-white rounded-md hover:bg-[#1a8cd8] transition-colors"
-									>
-										{/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
-										<svg
-											className="w-5 h-5 mr-2"
-											fill="currentColor"
-											viewBox="0 0 24 24"
-										>
-											<path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
-										</svg>
-										Tweet This
-									</Link>
+							{isLoadingTweet ? (
+								<div className="flex flex-col items-center justify-center py-8">
+									<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4" />
+									<p className="text-gray-600 text-center">
+										Hang on tight, we're generating a tweet
+										for you...
+									</p>
 								</div>
+							) : (
+								<div className="flex flex-col flex-1">
+									<div className="bg-gray-50 p-4 border-border border-2 border-dashed rounded-md flex-1">
+										<p className="text-gray-800 whitespace-pre-line">
+											{tweet}
+										</p>
+									</div>
+									<div className="mt-6 grid grid-cols-2 gap-3">
+										<Link
+											href={createTwitterIntent(tweet)}
+											target="_blank"
+											rel="noopener noreferrer"
+											className={cn(
+												buttonVariants({
+													variant: "outline",
+												}),
+												"flex items-center gap-2 justify-center",
+											)}
+										>
+											<SiX />
+											Post on X
+										</Link>
+										<Button
+											variant="outline"
+											className="flex items-center gap-2 justify-center"
+											onClick={e =>
+												copyToClipboard(tweet, e)
+											}
+										>
+											<Copy className="w-4 h-4" />
+											Copy to clipboard
+										</Button>
+									</div>
+								</div>
+							)}
+						</div>
+						<div className="bg-white rounded-lg shadow-lg p-6 border border-border flex flex-col">
+							<div className="flex items-center gap-2 mb-4">
+								<SiLinkedin
+									size={20}
+									className=" text-[#0A66C2]"
+								/>
+								<h2 className="text-xl font-medium">
+									Generated LinkedIn Post
+								</h2>
 							</div>
-						)}
-					</div>
-
-					<div className="bg-white rounded-lg shadow-lg p-6">
-						<h2 className="text-xl font-bold mb-4">
-							Generated LinkedIn Post
-						</h2>
-						{isLoadingLinkedin ? (
-							<div className="flex flex-col items-center justify-center py-8">
-								<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4" />
-								<p className="text-gray-600 text-center">
-									Crafting a professional LinkedIn post...
-								</p>
-							</div>
-						) : (
-							<div className="bg-gray-50 p-4 rounded-md">
-								<p className="text-gray-800 whitespace-pre-line">
-									{linkedinPost}
-								</p>
-							</div>
-						)}
+							{isLoadingLinkedin ? (
+								<div className="flex flex-col items-center justify-center py-8">
+									<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4" />
+									<p className="text-gray-600 text-center">
+										Crafting a professional LinkedIn post...
+									</p>
+								</div>
+							) : (
+								<div className="flex flex-col flex-1">
+									<div className="bg-gray-50 p-4 border-border border-2 border-dashed rounded-md flex-1">
+										<p className="text-gray-800 whitespace-pre-line">
+											{linkedinPost}
+										</p>
+									</div>
+									<div className="mt-6 grid grid-cols-2 gap-3">
+										<Link
+											href={createLinkedInIntent(
+												linkedinPost,
+											)}
+											target="_blank"
+											rel="noopener noreferrer"
+											className={cn(
+												buttonVariants({
+													variant: "outline",
+												}),
+												"flex items-center gap-2 justify-center",
+											)}
+										>
+											<SiLinkedin />
+											Post on LinkedIn
+										</Link>
+										<Button
+											variant="outline"
+											className="flex items-center gap-2 justify-center"
+											onClick={e =>
+												copyToClipboard(linkedinPost, e)
+											}
+										>
+											<Copy className="w-4 h-4" />
+											Copy to clipboard
+										</Button>
+									</div>
+								</div>
+							)}
+						</div>
 					</div>
 				</div>
 			</div>
