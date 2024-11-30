@@ -1,8 +1,14 @@
 "use client";
-import { useSession } from "@clerk/nextjs";
-import { useEffect } from "react";
+import NewUser from "@/components/NewUser";
+import { useState } from "react";
 
 const Dashboard = () => {
+	const [newUser, setNewUser] = useState(true);
+
+	if (newUser) {
+		return <NewUser />;
+	}
+
 	return <div>Dashboard</div>;
 };
 

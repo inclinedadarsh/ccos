@@ -26,3 +26,9 @@ export const originalLinkedinPostAtom = atom<string>("");
 
 // YouTube link atom (used in the home page)
 export const youtubeLinkAtom = atom("");
+
+// Dashboard-related atoms
+export const newUserAtom = atom(false);
+export const discordWebhook1Atom = atom("");
+export const discordWebhook2Atom = atom("");
+export const youtubeChannelAtom = atom("");
