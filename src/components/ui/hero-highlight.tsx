@@ -2,6 +2,7 @@
 import { cn } from "@/lib/utils";
 import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
 import type React from "react";
+import { Noise } from "./wobble-card";
 
 export const HeroHighlight = ({
 	children,
@@ -86,10 +87,11 @@ export const Highlight = ({
 				display: "inline",
 			}}
 			className={cn(
-				"relative inline-block px-2 rounded-lg bg-gradient-to-r from-blue-200 to-blue-400 dark:from-blue-500 dark:to-blue-700",
+				"relative inline-block px-3 rounded-lg bg-indigo-700 text-white [background-image:radial-gradient(88%_100%_at_top,rgba(255,255,255,0.5),rgba(255,255,255,0))]",
 				className,
 			)}
 		>
+			<Noise />
 			{children}
 		</motion.span>
 	);

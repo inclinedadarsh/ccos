@@ -1,9 +1,11 @@
 "use client";
 
+import { WobbleCardDemo } from "@/components/WobbleCardDemo";
 import { Button } from "@/components/ui/button";
 import { HeroHighlight, Highlight } from "@/components/ui/hero-highlight";
 import { Input } from "@/components/ui/input";
 import { ViewContainer } from "@/components/ui/view-container";
+import { Noise } from "@/components/ui/wobble-card";
 import { motion } from "framer-motion";
 import { useAtom } from "jotai";
 import { BookHeart, Megaphone, NotebookPen } from "lucide-react";
@@ -71,7 +73,10 @@ export default function Home() {
 						className="text-4xl md:text-6xl font-medium max-w-4xl mx-auto text-center"
 					>
 						Turn Your Videos into{" "}
-						<Highlight className="font-mono">Endless</Highlight>{" "}
+						<Highlight className="font-mono font-semibold">
+							Endless
+							<Noise />
+						</Highlight>{" "}
 						Marketing Assets
 					</motion.h1>
 					<motion.p
@@ -126,8 +131,25 @@ export default function Home() {
 				</ViewContainer>
 			</HeroHighlight>
 			<ViewContainer>
-				<h2 className="text-2xl font-medium">What all can you do?</h2>
-				<div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-white"></div>
+				<motion.h2
+					initial={{
+						opacity: 0,
+						y: 20,
+					}}
+					animate={{
+						opacity: 1,
+						y: [20, -5, 0],
+					}}
+					transition={{
+						duration: 0.5,
+						delay: 0.1,
+						ease: [0.4, 0.0, 0.2, 1],
+					}}
+					className="text-2xl md:text-4xl text-center my-10 font-medium"
+				>
+					What all can you do?
+				</motion.h2>
+				<WobbleCardDemo />
 			</ViewContainer>
 		</main>
 	);
