@@ -335,7 +335,7 @@ export default function VideoPage() {
 								</h2>
 							</div>
 							<Link
-								href="/signup"
+								href="/sign-up"
 								className={cn(
 									buttonVariants({ variant: "default" }),
 									"flex items-center gap-2",
