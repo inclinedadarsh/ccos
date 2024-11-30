@@ -8,8 +8,10 @@ import {
 	videoDataAtom,
 	videoLoadingAtom,
 } from "@/app/states";
+import { VideoDetailsCard } from "@/components/VideoDetailsCard";
+import { SiLinkedin, SiX, SiYoutube } from "@icons-pack/react-simple-icons";
 import { useAtom } from "jotai";
-import { Loader2 } from "lucide-react";
+import { Calendar, Eye, Loader2, ThumbsUp } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
@@ -136,68 +138,31 @@ export default function VideoPage() {
 
 	return (
 		<div className="min-h-screen p-8">
-			<div className="max-w-6xl mx-auto space-y-6">
-				<div className="bg-white rounded-lg shadow-lg overflow-hidden">
-					<div className="flex">
-						<div className="w-1/3 flex-shrink-0">
-							<img
-								src={videoData.thumbnail}
-								alt={videoData.title}
-								className="w-full h-full object-cover"
-							/>
-						</div>
-						<div className="w-2/3 p-6">
-							<h1 className="text-2xl font-bold mb-2">
-								<a
-									href={videoData.link}
-									target="_blank"
-									rel="noopener noreferrer"
-									className="hover:text-blue-600 hover:underline"
-								>
-									{videoData.title}
-								</a>
-							</h1>
+			<div className="max-w-6xl mx-auto space-y-8">
+				<h1 className="text-2xl font-medium">Video Details</h1>
 
-							<div className="mb-3 text-gray-600">
-								<div className="flex items-center gap-3">
-									<img
-										src={videoData.channelImage}
-										alt={videoData.channelName}
-										className="w-10 h-10 rounded-full"
-									/>
-									<a
-										href={videoData.channelUrl}
-										target="_blank"
-										rel="noopener noreferrer"
-										className="text-blue-600 hover:underline"
-									>
-										{videoData.channelName}
-									</a>
-								</div>
-								<div className="flex gap-3 mt-3 text-sm">
-									<span>
-										{new Date(
-											videoData.uploadDate,
-										).toLocaleDateString()}
-									</span>
-									<span>
-										{videoData.viewCount.toLocaleString()}{" "}
-										views
-									</span>
-									<span>
-										{videoData.likes.toLocaleString()} likes
-									</span>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+				<VideoDetailsCard
+					thumbnail={videoData.thumbnail}
+					title={videoData.title}
+					link={videoData.link}
+					channelImage={videoData.channelImage}
+					channelName={videoData.channelName}
+					channelUrl={videoData.channelUrl}
+					uploadDate={videoData.uploadDate}
+					viewCount={videoData.viewCount}
+					likes={videoData.likes}
+				/>
+
+				<h1 className="text-2xl font-medium pt-4">Generated Content</h1>
 
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-					<div className="bg-white rounded-lg shadow-lg p-6">
-						<h2 className="text-xl font-bold mb-4">
-							Generated Tweet
-						</h2>
+					<div className="bg-white rounded-lg shadow-lg p-6 border border-border">
+						<div className="flex items-center gap-2 mb-4">
+							<SiX size={20} className=" text-[#1DA1F2]" />
+							<h2 className="text-xl font-medium">
+								Generated Tweet
+							</h2>
+						</div>
 						{isLoadingTweet ? (
 							<div className="flex flex-col items-center justify-center py-8">
 								<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4" />
@@ -218,14 +183,7 @@ export default function VideoPage() {
 										rel="noopener noreferrer"
 										className="inline-flex items-center px-4 py-2 bg-[#1DA1F2] text-white rounded-md hover:bg-[#1a8cd8] transition-colors"
 									>
-										{/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
-										<svg
-											className="w-5 h-5 mr-2"
-											fill="currentColor"
-											viewBox="0 0 24 24"
-										>
-											<path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
-										</svg>
+										<SiX />
 										Tweet This
 									</Link>
 								</div>
@@ -233,10 +191,13 @@ export default function VideoPage() {
 						)}
 					</div>
 
-					<div className="bg-white rounded-lg shadow-lg p-6">
-						<h2 className="text-xl font-bold mb-4">
-							Generated LinkedIn Post
-						</h2>
+					<div className="bg-white rounded-lg shadow-lg p-6 border border-border">
+						<div className="flex items-center gap-2 mb-4">
+							<SiLinkedin size={20} className=" text-[#0A66C2]" />
+							<h2 className="text-xl font-medium">
+								Generated LinkedIn Post
+							</h2>
+						</div>
 						{isLoadingLinkedin ? (
 							<div className="flex flex-col items-center justify-center py-8">
 								<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4" />
