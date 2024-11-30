@@ -28,7 +28,18 @@ export const HeroHighlight = ({
 		mouseY.set(clientY - top);
 	}
 	return (
-		<div
+		<motion.div
+			initial={{
+				opacity: 0,
+			}}
+			animate={{
+				opacity: 1,
+			}}
+			transition={{
+				duration: 0.5,
+				delay: 0.2,
+				ease: [0.4, 0.0, 0.2, 1],
+			}}
 			className={cn(
 				"relative h-[40rem] flex items-center bg-white dark:bg-black justify-center w-full group",
 				containerClassName,
@@ -57,7 +68,7 @@ export const HeroHighlight = ({
 			/>
 
 			<div className={cn("relative z-20", className)}>{children}</div>
-		</div>
+		</motion.div>
 	);
 };
 

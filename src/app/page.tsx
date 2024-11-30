@@ -113,7 +113,7 @@ export default function Home() {
 							ease: [0.4, 0.0, 0.2, 1],
 						}}
 						onSubmit={handleSubmit}
-						className="w-full max-w-md mx-auto"
+						className="w-full max-w-lg mx-auto"
 					>
 						<div className="flex flex-col sm:flex-row gap-4">
 							<Input
