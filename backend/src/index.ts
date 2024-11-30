@@ -71,13 +71,28 @@ app.post("/api/new-user", async (c) => {
         const webHook = body.webHook;
         const youtubeChannel = body.channel_link;
 
-        const data = await updateUser(email, {
+        await updateUser(email, {
             discord_webhook: webHook,
             youtube_channel_link: youtubeChannel,
             new_user: false,
         });
 
-        return c.json({ status: "success", data });
+        const channelId = await getChannelId(youtubeChannel);
+
+        let latestVideos = [];
+
+        if (channelId) {
+            latestVideos = await getLatestVideos(channelId, 5);
+        } else {
+            throw new Error("Unable to get channelID : /api/new-user");
+        }
+
+        return c.json({
+            status: "success",
+            unprocessed_video: latestVideos,
+            processed_videos: [],
+            new_user: false,
+        });
     } catch (error) {
         console.log((error as Error).message);
         return c.json({ status: "fail" });
@@ -96,10 +111,10 @@ app.get("/get_video_stats", async (c) => {
 app.get("/get_latest_videos", async (c) => {
     const channel_url = c.req.query().channel_url;
     const channelId = await getChannelId(channel_url);
-    const listLength = Number(c.req.query().list_length);
+
     if (channelId) {
-        const latestVideos = await getLatestVideos(channelId, listLength);
-        return c.json({ ...latestVideos, status: "success" });
+        const latestVideos = await getLatestVideos(channelId, 5);
+        return c.json({ latestVideos, status: "success" });
     }
 
     return c.json({ status: "fail" });
