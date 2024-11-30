@@ -4,8 +4,13 @@
     "dev": "bun run --hot src/index.ts"
   },
   "dependencies": {
+    "@clerk/backend": "^1.18.0",
+    "@hono/clerk-auth": "^2.0.0",
+    "@supabase/supabase-js": "^2.46.2",
+    "@types/jsonwebtoken": "^9.0.7",
     "axios": "^1.7.8",
-    "hono": "^4.6.12"
+    "hono": "^4.6.12",
+    "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
     "@types/bun": "latest"
