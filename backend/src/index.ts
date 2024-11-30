@@ -8,6 +8,7 @@ import { createClerkClient } from "@clerk/backend";
 import getEmail from "./utils/getEmail";
 import emailExistsInDb from "./utils/emailExistsInDb";
 import createUser from "./utils/createUser";
+import updateUser from "./utils/updateuser";
 
 const app = new Hono();
 
@@ -52,22 +53,36 @@ app.get("/api/dashboard", async (c) => {
     }
 });
 
-// app.post("/api/new-user", async (c) => {
-//     const jwt_token = c.req.header("Authorization");
-//     const body = c.req.parseBody();
-//     const email = await getEmail(jwt_token);
+app.post("/api/new-user", async (c) => {
+    try {
+        const jwt_token = c.req.header("Authorization");
+        const body = await c.req.json();
 
-//     //     const webHook = body["webHook"];
-//     //     const youtubeChannel = body["channel_link"];
+        if (!jwt_token) {
+            throw new Error("did not get jwt_token");
+        }
 
-//     //     await updateUser(email, {
-//     //         discord_webhook: webHook,
-//     //         youtube_channel_link: youtubeChannel,
-//     //         new_user: false,
-//     //     });
+        let email = await getEmail(clerkClient, jwt_token);
 
-//     return c.json({ status: "success" });
-// });
+        if (!email) {
+            throw new Error("did not get email");
+        }
+
+        const webHook = body.webHook;
+        const youtubeChannel = body.channel_link;
+
+        const data = await updateUser(email, {
+            discord_webhook: webHook,
+            youtube_channel_link: youtubeChannel,
+            new_user: false,
+        });
+
+        return c.json({ status: "success", data });
+    } catch (error) {
+        console.log((error as Error).message);
+        return c.json({ status: "fail" });
+    }
+});
 
 app.get("/get_video_stats", async (c) => {
     const vid_stats = await getVideoStats(c.req.query().video_link);
