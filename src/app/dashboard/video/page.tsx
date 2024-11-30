@@ -19,6 +19,21 @@ const createTwitterIntent = (text: string) => {
 	return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
 };
 
+// Add this interface for type safety
+interface VideoStats {
+	title: string;
+	link: string;
+	thumbnailUrl: string;
+	likes: string;
+	views: string;
+	channel: {
+		name: string;
+		link: string;
+		imageUrl: string;
+	};
+	publishDate: string;
+}
+
 export default function VideoPage() {
 	const searchParams = useSearchParams();
 	const [loading, setLoading] = useAtom(videoLoadingAtom);
@@ -38,20 +53,26 @@ export default function VideoPage() {
 			}
 
 			try {
-				const response = await fetch("/api/youtube", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ url: decodeURIComponent(url) }),
-				});
+				const response = await fetch(
+					`http://20.244.84.131:3000/get_video_stats?video_link=${encodeURIComponent(url)}`,
+				);
 
 				if (!response.ok) {
 					throw new Error("Failed to fetch video data");
 				}
 
-				const data = await response.json();
-				setVideoData(data);
+				const data: VideoStats = await response.json();
+				setVideoData({
+					title: data.title,
+					link: data.link,
+					thumbnail: data.thumbnailUrl,
+					channelName: data.channel.name,
+					channelUrl: data.channel.link,
+					channelImage: data.channel.imageUrl,
+					viewCount: Number.parseInt(data.views),
+					likes: Number.parseInt(data.likes),
+					uploadDate: data.publishDate,
+				});
 			} catch (error) {
 				console.error("Error:", error);
 				toast.error("Failed to fetch video information");
@@ -127,19 +148,33 @@ export default function VideoPage() {
 						</div>
 						<div className="w-2/3 p-6">
 							<h1 className="text-2xl font-bold mb-2">
-								{videoData.title}
+								<a
+									href={videoData.link}
+									target="_blank"
+									rel="noopener noreferrer"
+									className="hover:text-blue-600 hover:underline"
+								>
+									{videoData.title}
+								</a>
 							</h1>
 
 							<div className="mb-3 text-gray-600">
-								<a
-									href={videoData.channelUrl}
-									target="_blank"
-									rel="noopener noreferrer"
-									className="text-blue-600 hover:underline"
-								>
-									{videoData.channelName}
-								</a>
-								<div className="flex gap-3 mt-1 text-sm">
+								<div className="flex items-center gap-3">
+									<img
+										src={videoData.channelImage}
+										alt={videoData.channelName}
+										className="w-10 h-10 rounded-full"
+									/>
+									<a
+										href={videoData.channelUrl}
+										target="_blank"
+										rel="noopener noreferrer"
+										className="text-blue-600 hover:underline"
+									>
+										{videoData.channelName}
+									</a>
+								</div>
+								<div className="flex gap-3 mt-3 text-sm">
 									<span>
 										{new Date(
 											videoData.uploadDate,
@@ -150,21 +185,9 @@ export default function VideoPage() {
 										views
 									</span>
 									<span>
-										{Math.floor(videoData.duration / 60)}:
-										{(videoData.duration % 60)
-											.toString()
-											.padStart(2, "0")}
+										{videoData.likes.toLocaleString()} likes
 									</span>
 								</div>
-							</div>
-
-							<div className="mt-4">
-								<h2 className="text-lg font-semibold mb-1">
-									Description
-								</h2>
-								<p className="text-gray-700 whitespace-pre-wrap text-sm">
-									{videoData.description}
-								</p>
 							</div>
 						</div>
 					</div>

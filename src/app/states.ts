@@ -4,13 +4,14 @@ import { atom } from "jotai";
 export const videoLoadingAtom = atom(true);
 export const videoDataAtom = atom<{
 	title: string;
+	link: string;
 	thumbnail: string;
 	channelName: string;
 	channelUrl: string;
-	duration: number;
+	channelImage: string;
 	viewCount: number;
+	likes: number;
 	uploadDate: string;
-	description: string;
 } | null>(null);
 
 // Tweet-related atoms
