@@ -1,2 +1,2 @@
-cd client
+cd frontend
 lint-staged
