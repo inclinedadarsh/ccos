@@ -3,6 +3,8 @@
 import {
 	linkedinLoadingAtom,
 	linkedinPostAtom,
+	originalLinkedinPostAtom,
+	originalTweetAtom,
 	tweetAtom,
 	tweetLoadingAtom,
 	videoDataAtom,
@@ -13,7 +15,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { SiLinkedin, SiX, SiYoutube } from "@icons-pack/react-simple-icons";
 import { useAtom } from "jotai";
-import { Calendar, Check, Copy, Eye, Loader2, ThumbsUp } from "lucide-react";
+import { Copy, Loader2, RotateCcw } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
@@ -51,6 +53,10 @@ export default function VideoPage() {
 	const [linkedinPost, setLinkedinPost] = useAtom(linkedinPostAtom);
 	const [isLoadingLinkedin, setIsLoadingLinkedin] =
 		useAtom(linkedinLoadingAtom);
+	const [originalTweet, setOriginalTweet] = useAtom(originalTweetAtom);
+	const [originalLinkedinPost, setOriginalLinkedinPost] = useAtom(
+		originalLinkedinPostAtom,
+	);
 
 	useEffect(() => {
 		const fetchVideoData = async () => {
@@ -98,6 +104,7 @@ export default function VideoPage() {
 				const response = await fetch("/api/tweet");
 				const data = await response.json();
 				setTweet(data.tweet);
+				setOriginalTweet(data.tweet);
 			} catch (error) {
 				console.error("Error fetching tweet:", error);
 			} finally {
@@ -106,7 +113,7 @@ export default function VideoPage() {
 		};
 
 		fetchTweet();
-	}, [setTweet, setIsLoadingTweet]);
+	}, [setTweet, setOriginalTweet, setIsLoadingTweet]);
 
 	useEffect(() => {
 		const fetchLinkedinPost = async () => {
@@ -114,6 +121,7 @@ export default function VideoPage() {
 				const response = await fetch("/api/linkedin");
 				const data = await response.json();
 				setLinkedinPost(data.post);
+				setOriginalLinkedinPost(data.post);
 			} catch (error) {
 				console.error("Error fetching LinkedIn post:", error);
 			} finally {
@@ -122,7 +130,7 @@ export default function VideoPage() {
 		};
 
 		fetchLinkedinPost();
-	}, [setLinkedinPost, setIsLoadingLinkedin]);
+	}, [setLinkedinPost, setOriginalLinkedinPost, setIsLoadingLinkedin]);
 
 	const copyToClipboard = async (
 		text: string,
@@ -133,7 +141,7 @@ export default function VideoPage() {
 
 		try {
 			await navigator.clipboard.writeText(text);
-			button.innerHTML = `<div class="flex items-center gap-2"><svg class="w-4 h-4" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Copied</div>`;
+			button.innerHTML = `<div class="flex items-center gap-2"><svg class="w-4 h-4" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
 
 			setTimeout(() => {
 				button.innerHTML = originalContent;
@@ -201,12 +209,12 @@ export default function VideoPage() {
 								</div>
 							) : (
 								<div className="flex flex-col flex-1">
-									<div className="bg-gray-50 p-4 border-border border-2 border-dashed rounded-md flex-1">
-										<p className="text-gray-800 whitespace-pre-line">
-											{tweet}
-										</p>
-									</div>
-									<div className="mt-6 grid grid-cols-2 gap-3">
+									<textarea
+										value={tweet}
+										onChange={e => setTweet(e.target.value)}
+										className="bg-gray-50 p-4 border-border border-2 border-dashed rounded-md flex-1 min-h-[150px] resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+									/>
+									<div className="mt-6 flex items-center gap-3">
 										<Link
 											href={createTwitterIntent(tweet)}
 											target="_blank"
@@ -215,7 +223,7 @@ export default function VideoPage() {
 												buttonVariants({
 													variant: "outline",
 												}),
-												"flex items-center gap-2 justify-center",
+												"flex items-center gap-2 justify-center grow",
 											)}
 										>
 											<SiX />
@@ -223,13 +231,23 @@ export default function VideoPage() {
 										</Link>
 										<Button
 											variant="outline"
+											size="icon"
 											className="flex items-center gap-2 justify-center"
 											onClick={e =>
 												copyToClipboard(tweet, e)
 											}
 										>
 											<Copy className="w-4 h-4" />
-											Copy to clipboard
+										</Button>
+										<Button
+											variant="outline"
+											size="icon"
+											className="flex items-center gap-2 justify-center"
+											onClick={() =>
+												setTweet(originalTweet)
+											}
+										>
+											<RotateCcw className="w-4 h-4" />
 										</Button>
 									</div>
 								</div>
@@ -254,12 +272,14 @@ export default function VideoPage() {
 								</div>
 							) : (
 								<div className="flex flex-col flex-1">
-									<div className="bg-gray-50 p-4 border-border border-2 border-dashed rounded-md flex-1">
-										<p className="text-gray-800 whitespace-pre-line">
-											{linkedinPost}
-										</p>
-									</div>
-									<div className="mt-6 grid grid-cols-2 gap-3">
+									<textarea
+										value={linkedinPost}
+										onChange={e =>
+											setLinkedinPost(e.target.value)
+										}
+										className="bg-gray-50 p-4 border-border border-2 border-dashed rounded-md flex-1 min-h-[150px] resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+									/>
+									<div className="mt-6 flex items-center gap-3">
 										<Link
 											href={createLinkedInIntent(
 												linkedinPost,
@@ -270,7 +290,7 @@ export default function VideoPage() {
 												buttonVariants({
 													variant: "outline",
 												}),
-												"flex items-center gap-2 justify-center",
+												"flex items-center gap-2 justify-center grow",
 											)}
 										>
 											<SiLinkedin />
@@ -278,13 +298,25 @@ export default function VideoPage() {
 										</Link>
 										<Button
 											variant="outline"
+											size="icon"
 											className="flex items-center gap-2 justify-center"
 											onClick={e =>
 												copyToClipboard(linkedinPost, e)
 											}
 										>
 											<Copy className="w-4 h-4" />
-											Copy to clipboard
+										</Button>
+										<Button
+											variant="outline"
+											size="icon"
+											className="flex items-center gap-2 justify-center"
+											onClick={() =>
+												setLinkedinPost(
+													originalLinkedinPost,
+												)
+											}
+										>
+											<RotateCcw className="w-4 h-4" />
 										</Button>
 									</div>
 								</div>
