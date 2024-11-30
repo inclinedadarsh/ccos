@@ -7,6 +7,7 @@ import {
 	useMotionValueEvent,
 	useScroll,
 } from "framer-motion";
+import { Home } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
 
@@ -90,6 +91,19 @@ export const FloatingNav = ({
 					</Link>
 				</SignedOut>
 				<SignedIn>
+					<Link
+						href="/dashboard"
+						className={cn(
+							"relative dark:text-neutral-50 items-center flex space-x-1 text-neutral-600 dark:hover:text-neutral-300 hover:text-neutral-500",
+						)}
+					>
+						<span className="block sm:hidden">
+							<Home className="h-4 w-4" />
+						</span>
+						<span className="hidden sm:block text-sm">
+							Dashboard
+						</span>
+					</Link>
 					<UserButton />
 				</SignedIn>
 			</motion.div>
