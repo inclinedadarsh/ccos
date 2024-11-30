@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import { Space_Grotesk } from "next/font/google";
-import localFont from "next/font/local";
+import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 
-const clashGrotesk = localFont({
-	src: "./fonts/ClashGrotesk-Variable.woff2",
+const inter = Inter({
+	subsets: ["latin"],
 	variable: "--font-sans",
 });
 
@@ -27,7 +26,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body
-				className={`${clashGrotesk.variable} ${spaceGrotesk.variable} font-sans antialiased`}
+				className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased`}
 			>
 				{children}
 				<Toaster richColors theme="light" />

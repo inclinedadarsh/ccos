@@ -70,7 +70,7 @@ export default function Home() {
 							delay: 0.1,
 							ease: [0.4, 0.0, 0.2, 1],
 						}}
-						className="text-4xl md:text-6xl font-medium max-w-4xl mx-auto text-center"
+						className="text-4xl md:text-6xl font-semibold max-w-4xl mx-auto text-center"
 					>
 						Turn Your Videos into{" "}
 						<Highlight className="font-mono font-semibold">
@@ -93,7 +93,7 @@ export default function Home() {
 							delay: 0.2,
 							ease: [0.4, 0.0, 0.2, 1],
 						}}
-						className="text-lg md:text-xl text-center max-w-2xl mx-auto"
+						className="text-lg md:text-xl text-center font-medium max-w-2xl mx-auto"
 					>
 						We generate a lot of content like blogs, tweets, and
 						other stuff using your YouTube video.
@@ -145,7 +145,7 @@ export default function Home() {
 						delay: 0.1,
 						ease: [0.4, 0.0, 0.2, 1],
 					}}
-					className="text-2xl md:text-4xl text-center my-10 font-medium"
+					className="text-2xl md:text-5xl text-center my-10 font-semibold"
 				>
 					What all can you do?
 				</motion.h2>
