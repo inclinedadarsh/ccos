@@ -5,17 +5,18 @@ async function emailExistsInDb(email: string) {
     const { data, error } = await supabase
         .from("ccos")
         .select("*")
-        .eq("email", email);
+        .eq("email", email)
+        .select();
 
     if (error) {
         throw new Error("Error in : emailExistsInDb", error);
     }
 
     if (data.length === 0) {
-        return false;
+        return [false, true];
     }
 
-    return true;
+    return [true, data[0].new_user];
 }
 
 export default emailExistsInDb;

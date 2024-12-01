@@ -33,20 +33,16 @@ app.get("/api/dashboard", async (c) => {
             throw new Error("did not get email");
         }
 
-        const emailExists = await emailExistsInDb(email);
-
-        let newUser = true;
+        const [emailExists, isNewUser] = await emailExistsInDb(email); // [emailExists, new_user]
 
         if (!emailExists) {
             await createUser({
                 email,
                 new_user: true,
             });
-        } else {
-            newUser = false;
         }
 
-        return c.json({ status: "success", new_user: newUser });
+        return c.json({ status: "success", new_user: isNewUser });
     } catch (error) {
         console.log((error as Error).message);
         return c.json({ status: "fail" });
@@ -68,11 +64,13 @@ app.post("/api/new-user", async (c) => {
             throw new Error("did not get email");
         }
 
-        const webHook = body.webHook;
+        const server_hook = body.server_hook;
+        const personal_hook = body.personal_hook;
         const youtubeChannel = body.channel_link;
 
         await updateUser(email, {
-            discord_webhook: webHook,
+            server_hook,
+            personal_hook,
             youtube_channel_link: youtubeChannel,
             new_user: false,
         });
@@ -111,7 +109,7 @@ app.get("/get_video_stats", async (c) => {
 app.get("/get_latest_videos", async (c) => {
     const channel_url = c.req.query().channel_url;
     const channelId = await getChannelId(channel_url);
-  
+
     if (channelId) {
         const latestVideos = await getLatestVideos(channelId, 5);
         return c.json({ latestVideos, status: "success" });
