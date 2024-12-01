@@ -16,7 +16,7 @@ import { triggerKestraFlow } from "./triggerKestraFlow";
 
 const app = new Hono();
 
-app.use("/*", cors({ origin: "*" }));
+app.use(cors({ origin: "*" }));
 
 const clerkClient = createClerkClient({
     secretKey: process.env.CLERK_SECRET_KEY,
