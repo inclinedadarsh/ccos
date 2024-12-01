@@ -26,7 +26,7 @@ export function LinkedInPostCard({
 	onCopy,
 }: LinkedInPostCardProps) {
 	return (
-		<div className="bg-white rounded-lg shadow-lg p-6 border border-border flex flex-col">
+		<div className="bg-white rounded-lg shadow-lg p-6 border border-border flex flex-col min-h-[400px]">
 			<div className="flex items-center gap-2 mb-4">
 				<SiLinkedin size={20} className="text-[#0A66C2]" />
 				<h2 className="text-xl font-medium">Generated LinkedIn Post</h2>

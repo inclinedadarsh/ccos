@@ -1,130 +1,39 @@
 "use client";
 
-import {
-	linkedinLoadingAtom,
-	linkedinPostAtom,
-	originalLinkedinPostAtom,
-	originalTweetAtom,
-	tweetAtom,
-	tweetLoadingAtom,
-	videoDataAtom,
-	videoLoadingAtom,
-} from "@/app/states";
 import { LinkedInPostCard } from "@/components/LinkedInPostCard";
 import { TwitterPostCard } from "@/components/TwitterPostCard";
 import { VideoDetailsCard } from "@/components/VideoDetailsCard";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { SiYoutube } from "@icons-pack/react-simple-icons";
-import { useAtom } from "jotai";
-import { Loader2 } from "lucide-react";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
-import { toast } from "sonner";
+import { useEffect, useState } from "react";
 
-// Add this interface for type safety
-interface VideoStats {
-	title: string;
-	link: string;
-	thumbnailUrl: string;
-	likes: string;
-	views: string;
-	channel: {
-		name: string;
-		link: string;
-		imageUrl: string;
-	};
-	publishDate: string;
-}
+const VIDEO_DATA = {
+	title: "Why Everyone Loves Zustand",
+	link: "https://www.youtube.com/watch?v=14B85quRQhw",
+	thumbnail: "https://i.ytimg.com/vi/14B85quRQhw/hqdefault.jpg",
+	likes: 2749,
+	viewCount: 109224,
+	channelName: "Theo - t3․gg",
+	channelUrl: "https://www.youtube.com/channel/UCbRP3c757lWg9M-U7TyEkXA",
+	channelImage:
+		"https://yt3.ggpht.com/4NapxEtLcHQ6wN2zA_DMmkOk47RFb_gy6sjSmUZGg_ARHjlIUjFsrNFddrcKMkTYpBNxCp3J=s800-c-k-c0x00ffffff-no-rj",
+	uploadDate: "2024-09-16T05:50:38Z",
+};
 
-export default function VideoPage() {
-	const searchParams = useSearchParams();
-	const [loading, setLoading] = useAtom(videoLoadingAtom);
-	const [videoData, setVideoData] = useAtom(videoDataAtom);
-	const [tweet, setTweet] = useAtom(tweetAtom);
-	const [isLoadingTweet, setIsLoadingTweet] = useAtom(tweetLoadingAtom);
-	const [linkedinPost, setLinkedinPost] = useAtom(linkedinPostAtom);
-	const [isLoadingLinkedin, setIsLoadingLinkedin] =
-		useAtom(linkedinLoadingAtom);
-	const [originalTweet, setOriginalTweet] = useAtom(originalTweetAtom);
-	const [originalLinkedinPost, setOriginalLinkedinPost] = useAtom(
-		originalLinkedinPostAtom,
-	);
+const INITIAL_TWEET =
+	"Just watched an amazing video! Check out this incredible content that dives deep into fascinating topics. Must watch! #ContentCreation #MustWatch";
+
+const INITIAL_LINKEDIN_POST = `Exciting Content Alert!
+
+Just discovered an incredible video that's packed with valuable insights. This content perfectly illustrates the power of effective communication and knowledge sharing.
+
+#ProfessionalDevelopment #ContentCreation #Learning`;
+
+export default function VideoPage({ params }: { params: { videoId: string } }) {
+	const [tweet, setTweet] = useState(INITIAL_TWEET);
+	const [linkedinPost, setLinkedinPost] = useState(INITIAL_LINKEDIN_POST);
 
 	useEffect(() => {
-		const fetchVideoData = async () => {
-			const url = searchParams.get("url");
-			if (!url) {
-				toast.error("No YouTube URL provided");
-				return;
-			}
-
-			try {
-				const response = await fetch(
-					`http://20.244.84.131:3000/get_video_stats?video_link=${encodeURIComponent(url)}`,
-				);
-
-				if (!response.ok) {
-					throw new Error("Failed to fetch video data");
-				}
-
-				const data: VideoStats = await response.json();
-				setVideoData({
-					title: data.title,
-					link: data.link,
-					thumbnail: data.thumbnailUrl,
-					channelName: data.channel.name,
-					channelUrl: data.channel.link,
-					channelImage: data.channel.imageUrl,
-					viewCount: Number.parseInt(data.views),
-					likes: Number.parseInt(data.likes),
-					uploadDate: data.publishDate,
-				});
-			} catch (error) {
-				console.error("Error:", error);
-				toast.error("Failed to fetch video information");
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		fetchVideoData();
-	}, [searchParams, setVideoData, setLoading]);
-
-	useEffect(() => {
-		const fetchTweet = async () => {
-			try {
-				const response = await fetch("/api/tweet");
-				const data = await response.json();
-				setTweet(data.tweet);
-				setOriginalTweet(data.tweet);
-			} catch (error) {
-				console.error("Error fetching tweet:", error);
-			} finally {
-				setIsLoadingTweet(false);
-			}
-		};
-
-		fetchTweet();
-	}, [setTweet, setOriginalTweet, setIsLoadingTweet]);
-
-	useEffect(() => {
-		const fetchLinkedinPost = async () => {
-			try {
-				const response = await fetch("/api/linkedin");
-				const data = await response.json();
-				setLinkedinPost(data.post);
-				setOriginalLinkedinPost(data.post);
-			} catch (error) {
-				console.error("Error fetching LinkedIn post:", error);
-			} finally {
-				setIsLoadingLinkedin(false);
-			}
-		};
-
-		fetchLinkedinPost();
-	}, [setLinkedinPost, setOriginalLinkedinPost, setIsLoadingLinkedin]);
+		console.log("Video ID from path:", params.videoId);
+	}, [params.videoId]);
 
 	const copyToClipboard = async (
 		text: string,
@@ -141,43 +50,25 @@ export default function VideoPage() {
 				button.innerHTML = originalContent;
 			}, 2000);
 		} catch (err) {
-			toast.error("Failed to copy to clipboard");
+			console.error("Failed to copy to clipboard");
 		}
 	};
 
-	if (loading) {
-		return (
-			<div className="min-h-screen flex items-center justify-center">
-				<Loader2 className="w-10 h-10 animate-spin" />
-			</div>
-		);
-	}
-
-	if (!videoData) {
-		return (
-			<div className="min-h-screen flex items-center justify-center">
-				<p className="text-xl text-red-500">
-					Failed to load video data
-				</p>
-			</div>
-		);
-	}
-
 	return (
-		<div className="min-h-screen p-8">
+		<div className="min-h-screen p-8 w-full">
 			<div className="max-w-6xl mx-auto space-y-12">
 				<div className="space-y-8">
 					<h1 className="text-3xl font-semibold">Video Details</h1>
 					<VideoDetailsCard
-						thumbnail={videoData.thumbnail}
-						title={videoData.title}
-						link={videoData.link}
-						channelImage={videoData.channelImage}
-						channelName={videoData.channelName}
-						channelUrl={videoData.channelUrl}
-						uploadDate={videoData.uploadDate}
-						viewCount={videoData.viewCount}
-						likes={videoData.likes}
+						thumbnail={VIDEO_DATA.thumbnail}
+						title={VIDEO_DATA.title}
+						link={VIDEO_DATA.link}
+						channelImage={VIDEO_DATA.channelImage}
+						channelName={VIDEO_DATA.channelName}
+						channelUrl={VIDEO_DATA.channelUrl}
+						uploadDate={VIDEO_DATA.uploadDate}
+						viewCount={VIDEO_DATA.viewCount}
+						likes={VIDEO_DATA.likes}
 					/>
 				</div>
 
@@ -185,72 +76,25 @@ export default function VideoPage() {
 					<h1 className="text-3xl font-semibold">
 						Generated Content
 					</h1>
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 						<TwitterPostCard
 							tweet={tweet}
-							isLoading={isLoadingTweet}
-							originalTweet={originalTweet}
-							onTweetChange={setTweet}
-							onReset={() => setTweet(originalTweet)}
+							isLoading={false}
+							originalTweet={INITIAL_TWEET}
+							onTweetChange={value => setTweet(value)}
+							onReset={() => setTweet(INITIAL_TWEET)}
 							onCopy={copyToClipboard}
 						/>
 						<LinkedInPostCard
 							post={linkedinPost}
-							isLoading={isLoadingLinkedin}
-							originalPost={originalLinkedinPost}
-							onPostChange={setLinkedinPost}
+							isLoading={false}
+							originalPost={INITIAL_LINKEDIN_POST}
+							onPostChange={value => setLinkedinPost(value)}
 							onReset={() =>
-								setLinkedinPost(originalLinkedinPost)
+								setLinkedinPost(INITIAL_LINKEDIN_POST)
 							}
 							onCopy={copyToClipboard}
 						/>
-					</div>
-				</div>
-
-				<div className="space-y-8">
-					<div className="bg-white rounded-lg shadow-lg p-6 border border-border">
-						<div className="flex items-center justify-between mb-4">
-							<div className="flex items-center gap-2">
-								<SiYoutube size={20} className="text-red-600" />
-								<h2 className="text-xl font-medium">
-									AI generated Blog Post based on the video
-								</h2>
-							</div>
-							<Link
-								href="/sign-up"
-								className={cn(
-									buttonVariants({ variant: "default" }),
-									"flex items-center gap-2",
-								)}
-							>
-								Create account to unlock
-							</Link>
-						</div>
-						<div className="relative">
-							{/* Blurred content */}
-							<div className="space-y-4 bg-gray-50 p-6 border-border border-2 border-dashed rounded-md  cursor-default">
-								<p className="text-gray-800 leading-relaxed blur-[6px] pointer-events-none">
-									Lorem ipsum dolor sit amet consectetur
-									adipisicing elit. At temporibus minus rem
-									reiciendis magni porro. Est qui ratione
-									quidem fugit? Hic autem sequi officia porro
-									recusandae ab. Labore, nostrum perferendis.
-								</p>
-								<p className="text-gray-800 leading-relaxed blur-[6px] pointer-events-none">
-									Lorem ipsum dolor sit amet, consectetur
-									adipisicing elit. Ipsum iste sint tempore
-									illum excepturi sit veniam consectetur,
-									asperiores recusandae dignissimos beatae
-									architecto ipsa aliquam cum fugit adipisci
-									totam accusamus? Ipsum vero delectus saepe,
-									ad atque libero pariatur eveniet excepturi?
-									Tempore officia quasi, maiores amet
-									consectetur aut, vero voluptates beatae
-									fugiat veniam harum labore error et commodi
-									laudantium voluptas repellat debitis?
-								</p>
-							</div>
-						</div>
 					</div>
 				</div>
 			</div>

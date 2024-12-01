@@ -27,7 +27,7 @@ export function VideoDetailsCard({
 	likes,
 }: VideoDetailsCardProps) {
 	return (
-		<div className="bg-white rounded-lg shadow-lg overflow-hidden border border-border">
+		<div className="w-full bg-white rounded-lg shadow-lg overflow-hidden border border-border">
 			<div className="flex flex-col lg:flex-row">
 				<div className="w-full lg:w-1/2 p-4">
 					<Image
