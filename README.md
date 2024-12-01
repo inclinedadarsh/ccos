@@ -17,6 +17,30 @@
 - **Content from Old Videos**: Easily repurpose older videos into fresh, engaging content within seconds.
 - **Kestra-Powered Automation**: Seamlessly handles the automation process.
 
+### Kestra Automation Flowchart
+
+```mermaid
+flowchart TD
+    A[Start] --> B{Loop Condition}
+    B -->|Iteration Count < 10000| C[Fetch Latest Video]
+    C --> D[Parse Video ID]
+    D --> E[Get Supabase Video ID]
+    
+    E --> F{Is Supabase Video ID Empty?}
+    F -->|Yes| G[Save Video ID to Supabase]
+    
+    F -->|No| H{Is New Video Different?}
+    H -->|Yes| I[Send Discord Notification]
+    I --> J[Request Content Generation]
+    J --> K[Update Supabase with New Video ID]
+    
+    H -->|No| B
+    G --> B
+    K --> B
+    
+    B -->|Iteration Count = 10000| L[End]
+```
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -24,6 +48,7 @@
 - Node.js 18+ and npm
 - Bun (for backend)
 - Clerk account
+- Kestra account
 - Supabase account
 - Google AI (Gemini) API key
 
