@@ -134,14 +134,19 @@ app.get("/api/generate_content", async (c) => {
 
             const { isProcessed, data } = await checkIfVideoProcessed(videoId);
 
+            let videoDetails = await getVideoStats(videoUrl);
             if (!isProcessed) {
-                let videoDetails = await getVideoStats(videoUrl);
                 await saveToDb({ videoId, videoDetails });
 
                 getContent(videoId);
             }
 
-            return c.json({ status: "success", isProcessed, data });
+            return c.json({
+                status: "success",
+                isProcessed,
+                data,
+                metaData: videoDetails,
+            });
         }
     } catch (error) {
         console.log((error as Error).message);

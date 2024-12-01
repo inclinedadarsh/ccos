@@ -28,7 +28,11 @@ async function checkIfVideoProcessed(
         data = null;
     }
 
-    return { isProcessed , data: data };
+    if (data) {
+        delete data.video_details;
+    }
+
+    return { isProcessed, data: data };
 }
 
 export default checkIfVideoProcessed;
