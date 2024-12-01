@@ -1,5 +1,6 @@
 "use client";
 
+import Footer from "@/components/Footer";
 import { WobbleCardDemo } from "@/components/WobbleCardDemo";
 import { Button } from "@/components/ui/button";
 import { HeroHighlight, Highlight } from "@/components/ui/hero-highlight";
@@ -151,6 +152,7 @@ export default function Home() {
 				</motion.h2>
 				<WobbleCardDemo />
 			</ViewContainer>
+			<Footer />
 		</main>
 	);
 }
