@@ -52,7 +52,7 @@ const NewUser: React.FC = () => {
 
 			const token = await session.getToken();
 			const response = await fetch(
-				"http://20.244.84.131:3000/api/new-user",
+				"https://frosthacks.sushant.tech/api/new-user",
 				{
 					method: "POST",
 					headers: {

@@ -65,7 +65,7 @@ const Dashboard = () => {
 
 				// First get the dashboard data
 				const dashboardResponse = await fetch(
-					"http://20.244.84.131:3000/api/dashboard",
+					"https://frosthacks.sushant.tech/api/dashboard",
 					{
 						headers: {
 							Authorization: `${token}`,
@@ -85,7 +85,7 @@ const Dashboard = () => {
 				// If processed_videos contains a video ID, fetch its content
 				if (dashboardData.processed_videos) {
 					const contentResponse = await fetch(
-						`http://20.244.84.131:3000/api/generate_content?video_id=${dashboardData.processed_videos}`,
+						`https://frosthacks.sushant.tech/api/generate_content?video_id=${dashboardData.processed_videos}`,
 					);
 					const contentData = await contentResponse.json();
 

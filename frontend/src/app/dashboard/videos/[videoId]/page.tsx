@@ -42,7 +42,7 @@ export default function VideoPage({ params }: { params: { videoId: string } }) {
 		const checkContentStatus = async () => {
 			try {
 				const response = await fetch(
-					`http://20.244.84.131:3000/api/generate_content?video_id=${params.videoId}`,
+					`https://frosthacks.sushant.tech/api/generate_content?video_id=${params.videoId}`,
 				);
 				const data: ApiResponse = await response.json();
 
