@@ -92,7 +92,7 @@ app.post("/api/new-user", async (c) => {
             throw new Error("Unable to get channelID : /api/new-user");
         }
 
-        // triggerKestraFlow(email, server_hook, personal_hook, yotube_channel_link);
+        // triggerKestraFlow({email, server_hook, personal_hook, yotube_channel_link, channel_id});
 
         return c.json({
             status: "success",
@@ -123,6 +123,41 @@ app.get("/get_latest_videos", async (c) => {
     }
 
     return c.json({ status: "fail" });
+});
+
+async function processVid(videoId: string) {
+    if (videoId) {
+        let videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+
+        const { isProcessed } = await checkIfVideoProcessed(videoId);
+
+        let videoDetails = await getVideoStats(videoUrl);
+        if (!isProcessed) {
+            await saveToDb({ videoId, videoDetails });
+
+            await getContent(videoId);
+        }
+    }
+}
+
+app.get("/api/kestra_generate_content", async (c) => {
+    const videoId = c.req.query().video_id;
+    const email = c.req.query().email;
+
+    let videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+
+    try {
+        processVid(videoId).then((res) => {
+            updateUser(email, { processed_videos: videoUrl });
+        });
+
+        return c.json({
+            status: "success",
+        });
+    } catch (error) {
+        console.log((error as Error).message);
+        return c.json({ status: "fail" });
+    }
 });
 
 app.get("/api/generate_content", async (c) => {

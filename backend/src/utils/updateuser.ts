@@ -6,6 +6,7 @@ async function updateUser(
         server_hook?: string;
         personal_hook?: string;
         youtube_channel_link?: string;
+        processed_videos?: string;
         unprocessed_videos?: [];
         new_user?: boolean;
     },
