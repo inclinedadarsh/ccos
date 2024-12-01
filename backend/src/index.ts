@@ -111,7 +111,7 @@ app.get("/get_video_stats", async (c) => {
 app.get("/get_latest_videos", async (c) => {
     const channel_url = c.req.query().channel_url;
     const channelId = await getChannelId(channel_url);
-
+  
     if (channelId) {
         const latestVideos = await getLatestVideos(channelId, 5);
         return c.json({ latestVideos, status: "success" });
