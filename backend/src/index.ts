@@ -33,16 +33,18 @@ app.get("/api/dashboard", async (c) => {
             throw new Error("did not get email");
         }
 
-        const [emailExists, isNewUser] = await emailExistsInDb(email); // [emailExists, new_user]
+        const { emailExists, isNewUser, ...data } = await emailExistsInDb(email);
 
         if (!emailExists) {
-            await createUser({
+            let data = await createUser({
                 email,
                 new_user: true,
             });
+
+            return c.json({ status: "success", new_user: isNewUser, ...data });
         }
 
-        return c.json({ status: "success", new_user: isNewUser });
+        return c.json({ status: "success", new_user: isNewUser, ...data });
     } catch (error) {
         console.log((error as Error).message);
         return c.json({ status: "fail" });
@@ -68,28 +70,28 @@ app.post("/api/new-user", async (c) => {
         const personal_hook = body.personal_hook;
         const youtubeChannel = body.channel_link;
 
-        await updateUser(email, {
-            server_hook,
-            personal_hook,
-            youtube_channel_link: youtubeChannel,
-            new_user: false,
-        });
-
         const channelId = await getChannelId(youtubeChannel);
-
         let latestVideos = [];
+
+        let data = null;
 
         if (channelId) {
             latestVideos = await getLatestVideos(channelId, 5);
+
+            data = await updateUser(email, {
+                server_hook,
+                personal_hook,
+                youtube_channel_link: youtubeChannel,
+                unprocessed_videos: latestVideos,
+                new_user: false,
+            });
         } else {
             throw new Error("Unable to get channelID : /api/new-user");
         }
 
         return c.json({
             status: "success",
-            unprocessed_video: latestVideos,
-            processed_videos: [],
-            new_user: false,
+            ...data,
         });
     } catch (error) {
         console.log((error as Error).message);

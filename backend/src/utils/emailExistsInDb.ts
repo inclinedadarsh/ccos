@@ -3,7 +3,7 @@ import getSupabaseClient from "../dbInit";
 async function emailExistsInDb(email: string) {
     let supabase = getSupabaseClient();
     const { data, error } = await supabase
-        .from("ccos")
+        .from("users")
         .select("*")
         .eq("email", email)
         .select();
@@ -13,10 +13,15 @@ async function emailExistsInDb(email: string) {
     }
 
     if (data.length === 0) {
-        return [false, true];
+        return { emailExists: false, isNewUser: true };
     }
 
-    return [true, data[0].new_user];
+    let isNewUser = data[0].new_user;
+
+    delete data[0].new_user;
+    delete data[0].id;
+
+    return { emailExists: true, isNewUser, ...data[0] };
 }
 
 export default emailExistsInDb;
