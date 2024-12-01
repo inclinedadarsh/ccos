@@ -1,5 +1,6 @@
 "use client";
 
+import { BlogPostCard } from "@/components/BlogPostCard";
 import { LinkedInPostCard } from "@/components/LinkedInPostCard";
 import { TwitterPostCard } from "@/components/TwitterPostCard";
 import { VideoDetailsCard } from "@/components/VideoDetailsCard";
@@ -27,9 +28,53 @@ Just discovered an incredible video that's packed with valuable insights. This c
 
 #ProfessionalDevelopment #ContentCreation #Learning`;
 
+const INITIAL_BLOG_POST = `# Why Everyone Loves Zustand: A Deep Dive
+
+## Introduction
+In the ever-evolving landscape of state management solutions for React applications, Zustand has emerged as a popular choice among developers. This lightweight yet powerful library offers a refreshingly simple approach to managing state.
+
+## Key Highlights from the Video
+
+### 1. Simplicity First
+- No boilerplate code required
+- Intuitive API that feels natural to React developers
+- Zero dependencies and tiny bundle size
+
+### 2. Powerful Features
+- Built-in devtools integration
+- Middleware support for advanced use cases
+- TypeScript support out of the box
+
+### 3. Performance Benefits
+- Minimal re-renders by default
+- Efficient state updates
+- Small memory footprint
+
+## Code Examples
+
+\`\`\`typescript
+import create from 'zustand'
+
+interface StoreState {
+  count: number
+  increment: () => void
+}
+
+const useStore = create<StoreState>((set) => ({
+  count: 0,
+  increment: () => set((state) => ({ count: state.count + 1 })),
+}))
+\`\`\`
+
+## Conclusion
+Zustand proves that state management doesn't have to be complicated. Its minimalist approach, combined with powerful features, makes it an excellent choice for both small and large React applications.
+
+#React #JavaScript #WebDevelopment #Zustand #StateMagement`;
+
 export default function VideoPage({ params }: { params: { videoId: string } }) {
 	const [tweet, setTweet] = useState(INITIAL_TWEET);
 	const [linkedinPost, setLinkedinPost] = useState(INITIAL_LINKEDIN_POST);
+	const [blogPost, setBlogPost] = useState(INITIAL_BLOG_POST);
 
 	useEffect(() => {
 		console.log("Video ID from path:", params.videoId);
@@ -96,6 +141,15 @@ export default function VideoPage({ params }: { params: { videoId: string } }) {
 							onCopy={copyToClipboard}
 						/>
 					</div>
+
+					<BlogPostCard
+						post={blogPost}
+						isLoading={false}
+						originalPost={INITIAL_BLOG_POST}
+						onPostChange={value => setBlogPost(value)}
+						onReset={() => setBlogPost(INITIAL_BLOG_POST)}
+						onCopy={copyToClipboard}
+					/>
 				</div>
 			</div>
 		</div>
