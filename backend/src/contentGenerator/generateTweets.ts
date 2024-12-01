@@ -5,7 +5,7 @@ dotenv.config();
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 export async function generateTweets(transcript: string, videoUrl: string) {
-    const prompt = `Create 1 viral tweet about this video transcript. Return ONLY a JSON object with a single key 'tweet' and the tweet text as value. Include the video URL ${videoUrl} in the tweet.
+    const prompt = `Create 1 viral tweet about this video transcript. Include the video URL ${videoUrl} in the tweet.
 
   Video transcript: ${transcript}
 
@@ -15,11 +15,7 @@ export async function generateTweets(transcript: string, videoUrl: string) {
   - Create curiosity
   - Add engaging question
   - Keep tweet under 280 characters
-
-  Return format:
-  {
-    "tweet": "..."
-  }`;
+  `;
 
     try {
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
@@ -27,11 +23,9 @@ export async function generateTweets(transcript: string, videoUrl: string) {
         const response = result.response.text();
 
         try {
-            const parsedResponse = response.replace(/```json\n|\n```/g, '');
-            const parsedTweets = JSON.parse(parsedResponse);
             return {
                 success: true,
-                data: parsedTweets
+                data: response
             };
         } catch (parseError) {
             console.error('Failed to parse tweets JSON:', parseError);

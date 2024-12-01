@@ -10,6 +10,8 @@ import emailExistsInDb from "./utils/emailExistsInDb";
 import createUser from "./utils/createUser";
 import updateUser from "./utils/updateuser";
 import getContent from "./contentGenerator/getContent";
+import saveToDb from "./utils/saveToDb";
+import checkIfVideoProcessed from "./utils/checkIfVideoProcessed";
 
 const app = new Hono();
 
@@ -123,15 +125,23 @@ app.get("/get_latest_videos", async (c) => {
     return c.json({ status: "fail" });
 });
 
-app.get("/api/get_content", async (c) => {
+app.get("/api/generate_content", async (c) => {
     const videoId = c.req.query().video_id;
 
     try {
         if (videoId) {
             let videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
-            const content = await getContent(videoUrl);
 
-            return c.json({ status: "success", content });
+            const { isProcessed, data } = await checkIfVideoProcessed(videoId);
+
+            if (!isProcessed) {
+                let videoDetails = await getVideoStats(videoUrl);
+                await saveToDb({ videoId, videoDetails });
+
+                getContent(videoId);
+            }
+
+            return c.json({ status: "success", isProcessed, data });
         }
     } catch (error) {
         console.log((error as Error).message);

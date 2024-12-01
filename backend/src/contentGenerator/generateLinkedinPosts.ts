@@ -5,7 +5,7 @@ dotenv.config();
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 export async function generateLinkedinPosts(transcript: string, videoUrl: string) {
-    const prompt = `Create 1 professional LinkedIn post about this video transcript. Return ONLY a JSON object with a single key 'post' and the post text as value. Include the video URL ${videoUrl} in the post.
+    const prompt = `Create 1 professional LinkedIn post about this video transcript. Include the video URL ${videoUrl} in the post.
 
   Video transcript: ${transcript}
 
@@ -14,12 +14,8 @@ export async function generateLinkedinPosts(transcript: string, videoUrl: string
   - Include business insights
   - Use bullet points where relevant
   - Share industry context
-  - End with thought-provoking question
-
-  Return format:
-  {
-    "post": "..."
-  }`;
+  - End with thought-provoking question`
+  ;
 
     try {
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
@@ -27,11 +23,9 @@ export async function generateLinkedinPosts(transcript: string, videoUrl: string
         const response = result.response.text();
 
         try {
-            const parsedResponse = response.replace(/```json\n|\n```/g, '');
-            const parsedPosts = JSON.parse(parsedResponse);
             return {
                 success: true,
-                data: parsedPosts
+                data: response
             };
         } catch (parseError) {
             console.error('Failed to parse LinkedIn posts JSON:', parseError);
