@@ -28,7 +28,9 @@ async function getTranscript(videoUrl: string) {
     } catch (error) {
         console.error(
             "Error fetching transcript:",
-            error.response?.data || (error as Error).message,
+            axios.isAxiosError(error) 
+                ? error.response?.data 
+                : (error as Error).message,
         );
 
         return {

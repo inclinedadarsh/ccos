@@ -5,22 +5,20 @@ dotenv.config();
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 export async function generateLinkedinPosts(transcript: string, videoUrl: string) {
-    const prompt = `Create 5 professional LinkedIn posts about this video transcript. Return ONLY a JSON object where keys are post1, post2, etc. and values are the post text. Include the video URL ${videoUrl} in each post.
+    const prompt = `Create 1 professional LinkedIn post about this video transcript. Return ONLY a JSON object with a single key 'post' and the post text as value. Include the video URL ${videoUrl} in the post.
 
   Video transcript: ${transcript}
 
   Requirements:
-  - Start with powerful professional hooks
+  - Start with powerful professional hook
   - Include business insights
   - Use bullet points where relevant
   - Share industry context
-  - End with thought-provoking questions
+  - End with thought-provoking question
 
   Return format:
   {
-    "post1": "...",
-    "post2": "...",
-    ...
+    "post": "..."
   }`;
 
     try {
