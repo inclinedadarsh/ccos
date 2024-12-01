@@ -1,0 +1,88 @@
+id: youtube_looper
+namespace: company.team
+
+inputs:
+  - id: email
+    type: STRING
+    required: true
+    displayName: "Email Address"
+
+  - id: youtube_channel_link
+    type: STRING
+    required: true
+    displayName: "YouTube Channel Link"
+
+  - id: personal_hook
+    type: STRING
+    required: true
+    displayName: "Personal Hook"
+
+  - id: channel_id
+    type: STRING
+    required: true
+    displayName: "Channel ID"
+
+  - id: server_hook
+    type: STRING
+    required: true
+    displayName: "Server Hook"
+
+tasks:
+  - id: loop
+    type: io.kestra.plugin.core.flow.WaitFor
+    condition: "{{ outputs.loop.iterationCount == 10000 }}"
+    checkFrequency:
+      interval: PT15S
+    tasks:
+      - id: fetch_latest_vid
+        type: io.kestra.plugin.core.http.Request
+        contentType: application/json
+        uri: https://www.googleapis.com/youtube/v3/search?key={{ kv('YOUTUBE_API_KEY') }}&channelId={{inputs.channel_id}}&order=date&part=snippet&type=video&maxResults=1
+
+      - id: parse_video_id
+        type: io.kestra.plugin.core.debug.Return
+        format: "{{ outputs.fetch_latest_vid.body | jq('.items[0].id.videoId') | first}}"
+
+      - id: get_supabase_video_id
+        type: io.kestra.plugin.jdbc.postgresql.Query
+        fetchType: FETCH
+        sql: |
+          select latest_video_id 
+          from users 
+          where email = '{{inputs.email}}'
+        url: jdbc:postgresql://aws-0-ap-south-1.pooler.supabase.com:6543/postgres?user=postgres.eaxeogjskrvflnrlwnbz&password=kmEqY2ecDYCfLl32
+
+      - id: is_empty
+        type: io.kestra.plugin.core.flow.If
+        condition: "{{outputs.get_supabase_video_id.rows | first | jq('.latest_video_id') | first == '' }}"
+        then:
+          - id: save_to_supabase
+            type: io.kestra.plugin.jdbc.postgresql.Query
+            sql: |-
+              UPDATE users
+              SET latest_video_id = '{{outputs.parse_video_id.value}}'
+              WHERE email = '{{inputs.email}}';
+            url: "{{ kv('DB') }}"
+        else:
+          - id: check_if_not_same
+            type: io.kestra.plugin.core.flow.If
+            condition: "{{outputs.parse_video_id.value != outputs.get_supabase_video_id.rows | first | jq('.latest_video_id') | first}}"
+            then:
+              - id: send_notification_to_user
+                type: io.kestra.plugin.notifications.discord.DiscordIncomingWebhook
+                payload: '{"username": "ttm", "content": "We detected a new video https://www.youtube.com/watch?v={{outputs.parse_video_id.value}}"}'
+                url: "{{inputs.personal_hook}}"
+
+              - id: request_kestra_generate_content
+                type: io.kestra.plugin.core.http.Request
+                contentType: application/json
+                method: GET
+                uri: http://20.244.84.131:3000/api/kestra_generate_content?video_id={{outputs.parse_video_id.value}}&email={{inputs.email}}
+
+              - id: save_to_supabase_after_notification
+                type: io.kestra.plugin.jdbc.postgresql.Query
+                sql: |-
+                  UPDATE users
+                  SET latest_video_id = '{{outputs.parse_video_id.value}}'
+                  WHERE email = '{{inputs.email}}';
+                url: "{{ kv('DB') }}"
