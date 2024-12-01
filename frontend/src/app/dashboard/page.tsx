@@ -10,12 +10,14 @@ import NewUser from "@/components/NewUser";
 import UnprocessedVideos from "@/components/UnprocessedVideos";
 import { VideoDetailsCard } from "@/components/VideoDetailsCard";
 import { buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useClerk } from "@clerk/nextjs";
 import { useAtom } from "jotai";
 import { Loader2, ScanEye } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 type VideoDetails = {
 	title: string;
@@ -31,6 +33,13 @@ type VideoDetails = {
 	publishDate: string;
 };
 
+const extractVideoId = (url: string) => {
+	const regExp =
+		/^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+	const match = url.match(regExp);
+	return match && match[7].length === 11 ? match[7] : null;
+};
+
 const Dashboard = () => {
 	const { session } = useClerk();
 	const [newUser, setNewUser] = useAtom(newUserAtom);
@@ -43,6 +52,7 @@ const Dashboard = () => {
 	const [latestVideo, setLatestVideo] = useState<VideoDetails | null>(null);
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	const [latestData, setLatestData] = useState<any>(null);
+	const [videoUrl, setVideoUrl] = useState("");
 
 	useEffect(() => {
 		const fetchDashboardData = async () => {
@@ -99,6 +109,15 @@ const Dashboard = () => {
 		setUnprocessedVideos,
 		setProcessedVideos,
 	]);
+
+	const handleVideoSubmit = () => {
+		const videoId = extractVideoId(videoUrl);
+		if (!videoId) {
+			toast.error("Please enter a valid YouTube video URL");
+			return;
+		}
+		window.location.href = `/dashboard/videos/${videoId}`;
+	};
 
 	if (loading || !latestData) {
 		return (
@@ -178,6 +197,35 @@ const Dashboard = () => {
 					</div>
 				</div>
 			)}
+			<div className="mb-6 space-y-4">
+				<div className="flex gap-4 items-end">
+					<div className="flex-1">
+						<label
+							htmlFor="videoUrl"
+							className="text text-gray-600 mb-2 block"
+						>
+							Enter link to any video you want to generate content
+							for
+						</label>
+						<Input
+							id="videoUrl"
+							value={videoUrl}
+							onChange={e => setVideoUrl(e.target.value)}
+							placeholder="https://www.youtube.com/watch?v=..."
+						/>
+					</div>
+					<Link
+						href="#"
+						onClick={e => {
+							e.preventDefault();
+							handleVideoSubmit();
+						}}
+						className={cn(buttonVariants({ variant: "outline" }))}
+					>
+						Generate Content
+					</Link>
+				</div>
+			</div>
 			{unprocessedVideos ? (
 				<UnprocessedVideos videos={unprocessedVideos} />
 			) : (
