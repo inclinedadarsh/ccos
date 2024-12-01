@@ -49,6 +49,7 @@ type Video = {
 		imageUrl: string;
 	};
 	publishDate: string;
+	videoId: string;
 };
 
 // Add new videos atom

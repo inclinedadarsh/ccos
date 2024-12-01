@@ -1,6 +1,7 @@
+import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 
 interface Channel {
 	name: string;
@@ -16,6 +17,7 @@ interface Video {
 	views: string;
 	channel: Channel;
 	publishDate: string;
+	videoId: string;
 }
 
 interface UnprocessedVideosProps {
@@ -83,16 +85,14 @@ const UnprocessedVideos: React.FC<UnprocessedVideosProps> = ({ videos }) => {
 							</div>
 						</div>
 
-						<Button
-							variant="outline"
-							onClick={() =>
-								console.log(
-									`Generate clicked for video: ${video.title}`,
-								)
-							}
+						<Link
+							href={`/dashboard/videos/${video.videoId}`}
+							className={cn(
+								buttonVariants({ variant: "outline" }),
+							)}
 						>
 							Generate
-						</Button>
+						</Link>
 					</div>
 				))}
 			</div>
