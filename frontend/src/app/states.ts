@@ -52,4 +52,4 @@ type Video = {
 };
 
 // Add new videos atom
-export const videosAtom = atom<Video[]>([]);
+export const unprocessedVideosAtom = atom<Video[]>([]);

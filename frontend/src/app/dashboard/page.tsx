@@ -1,5 +1,10 @@
 "use client";
-import { errorAtom, loadingAtom, newUserAtom, videosAtom } from "@/app/states";
+import {
+	errorAtom,
+	loadingAtom,
+	newUserAtom,
+	unprocessedVideosAtom,
+} from "@/app/states";
 import NewUser from "@/components/NewUser";
 import UnprocessedVideos from "@/components/UnprocessedVideos";
 import { useClerk } from "@clerk/nextjs";
@@ -12,7 +17,9 @@ const Dashboard = () => {
 	const [newUser, setNewUser] = useAtom(newUserAtom);
 	const [loading, setLoading] = useAtom(loadingAtom);
 	const [error, setError] = useAtom(errorAtom);
-	const [videos, setVideos] = useAtom(videosAtom);
+	const [unprocessedVideos, setUnprocessedVideos] = useAtom(
+		unprocessedVideosAtom,
+	);
 
 	useEffect(() => {
 		const fetchDashboardData = async () => {
@@ -35,8 +42,8 @@ const Dashboard = () => {
 					throw new Error("Failed to fetch dashboard data");
 				}
 				setNewUser(data.new_user);
-				if (data.videos) {
-					setVideos(data.videos);
+				if (data.unprocessed_videos) {
+					setUnprocessedVideos(data.unprocessed_videos);
 				}
 				console.log(data);
 			} catch (error) {
@@ -48,7 +55,7 @@ const Dashboard = () => {
 		};
 
 		fetchDashboardData();
-	}, [session, setNewUser, setLoading, setError, setVideos]);
+	}, [session, setNewUser, setLoading, setError, setUnprocessedVideos]);
 
 	if (loading) {
 		return (
@@ -74,7 +81,14 @@ const Dashboard = () => {
 	return (
 		<div className="p-4 w-full">
 			<h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-			<UnprocessedVideos videos={videos} />
+			{unprocessedVideos ? (
+				<UnprocessedVideos videos={unprocessedVideos} />
+			) : (
+				<div className="flex w-full items-center justify-center h-screen">
+					<Loader2 className="animate-spin" />
+					Hang on tight, we are processing your videos...
+				</div>
+			)}
 		</div>
 	);
 };

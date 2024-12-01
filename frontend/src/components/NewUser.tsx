@@ -5,6 +5,7 @@ import {
 	errorAtom,
 	loadingAtom,
 	newUserAtom,
+	unprocessedVideosAtom,
 	youtubeChannelAtom,
 } from "@/app/states";
 import { Button } from "@/components/ui/button";
@@ -30,6 +31,9 @@ const NewUser: React.FC = () => {
 	const [newUser, setNewUser] = useAtom(newUserAtom);
 	const [loading, setLoading] = useAtom(loadingAtom);
 	const [error, setError] = useAtom(errorAtom);
+	const [unprocessedVideos, setUnprocessedVideos] = useAtom(
+		unprocessedVideosAtom,
+	);
 
 	const handleSubmit = async () => {
 		if (!personalHook || !serverHook || !youtubeLink) {
@@ -71,6 +75,7 @@ const NewUser: React.FC = () => {
 
 			toast.success("Settings saved successfully!");
 			setNewUser(data.new_user);
+			setUnprocessedVideos(data.unprocessed_videos);
 		} catch (error) {
 			console.error("Error saving user settings:", error);
 			toast.error("Failed to save settings. Please try again.");
