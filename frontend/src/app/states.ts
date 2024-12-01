@@ -35,3 +35,21 @@ export const youtubeChannelAtom = atom("");
 
 export const loadingAtom = atom(true);
 export const errorAtom = atom(false);
+
+// Define the video type
+type Video = {
+	title: string;
+	link: string;
+	thumbnailUrl: string;
+	likes: string;
+	views: string;
+	channel: {
+		name: string;
+		link: string;
+		imageUrl: string;
+	};
+	publishDate: string;
+};
+
+// Add new videos atom
+export const videosAtom = atom<Video[]>([]);
