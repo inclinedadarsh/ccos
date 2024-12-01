@@ -9,6 +9,7 @@ import getEmail from "./utils/getEmail";
 import emailExistsInDb from "./utils/emailExistsInDb";
 import createUser from "./utils/createUser";
 import updateUser from "./utils/updateuser";
+import getContent from "./contentGenerator/getContent";
 
 const app = new Hono();
 
@@ -120,6 +121,22 @@ app.get("/get_latest_videos", async (c) => {
     }
 
     return c.json({ status: "fail" });
+});
+
+app.get("/api/get_content", async (c) => {
+    const videoId = c.req.query().video_id;
+
+    try {
+        if (videoId) {
+            let videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+            const content = await getContent(videoUrl);
+
+            return c.json({ status: "success", content });
+        }
+    } catch (error) {
+        console.log((error as Error).message);
+        return c.json({ status: "fail" });
+    }
 });
 
 export default app;
