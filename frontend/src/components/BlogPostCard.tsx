@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Copy, RotateCcw } from "lucide-react";
 import { BookMarked } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface BlogPostCardProps {
 	post: string;
@@ -55,10 +57,13 @@ export function BlogPostCard({
 							/>
 						</TabsContent>
 						<TabsContent value="preview" className="flex-1">
-							<div className="bg-gray-50 p-4 border-border border-2 border-dashed rounded-md h-full">
-								<p className="text-gray-600">
-									Preview will appear here
-								</p>
+							<div className="bg-gray-50 p-4 border-border border-2 border-dashed rounded-md h-full overflow-auto">
+								<ReactMarkdown
+									remarkPlugins={[remarkGfm]}
+									className="markdown"
+								>
+									{post}
+								</ReactMarkdown>
 							</div>
 						</TabsContent>
 					</Tabs>
