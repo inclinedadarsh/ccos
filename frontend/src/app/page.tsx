@@ -1,6 +1,7 @@
 "use client";
 
 import Footer from "@/components/Footer";
+import { HeroScrollDemo } from "@/components/HeroScrollDemo";
 import { WobbleCardDemo } from "@/components/WobbleCardDemo";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { HeroHighlight, Highlight } from "@/components/ui/hero-highlight";
@@ -73,7 +74,7 @@ export default function Home() {
 							delay: 0.1,
 							ease: [0.4, 0.0, 0.2, 1],
 						}}
-						className="text-4xl md:text-6xl font-semibold max-w-4xl mx-auto text-center"
+						className="text-4xl md:text-6xl font-bold max-w-5xl mx-auto text-center"
 					>
 						Turn Your Videos into{" "}
 						<Highlight className="font-mono font-semibold">
@@ -96,7 +97,7 @@ export default function Home() {
 							delay: 0.2,
 							ease: [0.4, 0.0, 0.2, 1],
 						}}
-						className="text-lg md:text-xl text-center font-medium max-w-2xl mx-auto"
+						className="text-lg md:text-xl text-center max-w-2xl mx-auto"
 					>
 						We generate a lot of content like blogs, tweets, and
 						other stuff using your YouTube video.
@@ -129,7 +130,8 @@ export default function Home() {
 					</motion.div>
 				</ViewContainer>
 			</HeroHighlight>
-			<ViewContainer>
+			<HeroScrollDemo />
+			<ViewContainer className="-mt-36">
 				<motion.h2
 					initial={{
 						opacity: 0,
