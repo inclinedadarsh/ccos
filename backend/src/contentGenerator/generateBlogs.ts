@@ -5,19 +5,20 @@ dotenv.config();
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 export async function generateBlogs(transcript: string, videoUrl: string) {
-  const prompt = `Create 5 blog posts about this video transcript. Return ONLY a JSON object where keys are blog1, blog2, etc. and values are the blog text. Include the video URL ${videoUrl} in each blog.
+  const prompt = `Create 1 blog post about this video transcript. Return ONLY a JSON object with a single key 'blog' and the blog text as value. Include the video URL ${videoUrl} in the blog.
+  
   Video transcript: ${transcript}
+  
   Requirements:
-  - SEO-optimized 300-400 word posts
-  - Compelling headlines
+  - SEO-optimized 300-400 word post
+  - Compelling headline
   - Scannable sections
   - Include insights and analysis
-  - End with calls-to-action
+  - End with call-to-action
+  
   Return format:
   {
-    "blog1": "...",
-    "blog2": "...",
-    ...
+    "blog": "..."
   }`;
 
   try {

@@ -5,22 +5,20 @@ dotenv.config();
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 export async function generateTweets(transcript: string, videoUrl: string) {
-    const prompt = `Create 5 viral tweets about this video transcript. Return ONLY a JSON object where keys are tweet1, tweet2, etc. and values are the tweet text. Include the video URL ${videoUrl} in each tweet.
+    const prompt = `Create 1 viral tweet about this video transcript. Return ONLY a JSON object with a single key 'tweet' and the tweet text as value. Include the video URL ${videoUrl} in the tweet.
 
   Video transcript: ${transcript}
 
   Requirements:
-  - Use attention-grabbing hooks
+  - Use attention-grabbing hook
   - Include relevant hashtags
   - Create curiosity
-  - Add engaging questions
-  - Keep each tweet under 280 characters
+  - Add engaging question
+  - Keep tweet under 280 characters
 
   Return format:
   {
-    "tweet1": "...",
-    "tweet2": "...",
-    ...
+    "tweet": "..."
   }`;
 
     try {
