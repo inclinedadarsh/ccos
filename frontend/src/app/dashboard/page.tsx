@@ -3,13 +3,14 @@ import {
 	errorAtom,
 	loadingAtom,
 	newUserAtom,
+	processedVideosAtom,
 	unprocessedVideosAtom,
 } from "@/app/states";
 import NewUser from "@/components/NewUser";
 import UnprocessedVideos from "@/components/UnprocessedVideos";
 import { useClerk } from "@clerk/nextjs";
 import { useAtom } from "jotai";
-import { Loader2 } from "lucide-react";
+import { Loader2, ScanEye } from "lucide-react";
 import { useEffect } from "react";
 
 const Dashboard = () => {
@@ -20,6 +21,7 @@ const Dashboard = () => {
 	const [unprocessedVideos, setUnprocessedVideos] = useAtom(
 		unprocessedVideosAtom,
 	);
+	const [processedVideos, setProcessedVideos] = useAtom(processedVideosAtom);
 
 	useEffect(() => {
 		const fetchDashboardData = async () => {
@@ -45,7 +47,7 @@ const Dashboard = () => {
 				if (data.unprocessed_videos) {
 					setUnprocessedVideos(data.unprocessed_videos);
 				}
-				console.log(data);
+				setProcessedVideos(data.processed_videos);
 			} catch (error) {
 				console.error("Error fetching dashboard data:", error);
 				setError(true);
@@ -55,7 +57,14 @@ const Dashboard = () => {
 		};
 
 		fetchDashboardData();
-	}, [session, setNewUser, setLoading, setError, setUnprocessedVideos]);
+	}, [
+		session,
+		setNewUser,
+		setLoading,
+		setError,
+		setUnprocessedVideos,
+		setProcessedVideos,
+	]);
 
 	if (loading) {
 		return (
@@ -81,6 +90,16 @@ const Dashboard = () => {
 	return (
 		<div className="p-4 w-full">
 			<h1 className="text-2xl font-bold mb-4">Dashboard</h1>
+			{processedVideos === null && (
+				<div className="text-gray-600 mb-4 max-w-md space-y-2">
+					<ScanEye />
+					<p>
+						We're constantly watching your YouTube channel. We'll
+						process your videos automatically as soon as you upload
+						them.
+					</p>
+				</div>
+			)}
 			{unprocessedVideos ? (
 				<UnprocessedVideos videos={unprocessedVideos} />
 			) : (
