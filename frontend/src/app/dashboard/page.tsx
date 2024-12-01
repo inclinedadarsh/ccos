@@ -6,6 +6,7 @@ import {
 	processedVideosAtom,
 	unprocessedVideosAtom,
 } from "@/app/states";
+import { handIllustration } from "@/assets";
 import NewUser from "@/components/NewUser";
 import UnprocessedVideos from "@/components/UnprocessedVideos";
 import { VideoDetailsCard } from "@/components/VideoDetailsCard";
@@ -15,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { useClerk } from "@clerk/nextjs";
 import { useAtom } from "jotai";
 import { Loader2, ScanEye } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -57,41 +59,42 @@ const Dashboard = () => {
 	useEffect(() => {
 		const fetchDashboardData = async () => {
 			try {
-				if (!session) {
-					return;
-				}
+				if (!session) return;
 
 				const token = await session.getToken();
 
-				// Make both API calls in parallel
-				const [dashboardResponse, latestResponse] = await Promise.all([
-					fetch("http://20.244.84.131:3000/api/dashboard", {
+				// First get the dashboard data
+				const dashboardResponse = await fetch(
+					"http://20.244.84.131:3000/api/dashboard",
+					{
 						headers: {
 							Authorization: `${token}`,
 						},
-					}),
-					fetch("/api/supabase/latest"),
-				]);
-
-				const [dashboardData, latestData] = await Promise.all([
-					dashboardResponse.json(),
-					latestResponse.json(),
-				]);
+					},
+				);
+				const dashboardData = await dashboardResponse.json();
 
 				if (dashboardData.status === "fail") {
 					throw new Error("Failed to fetch dashboard data");
 				}
 
-				if (latestData.data?.video_details) {
-					setLatestVideo(latestData.data.video_details);
+				setNewUser(dashboardData.new_user);
+				setUnprocessedVideos(dashboardData.unprocessed_videos);
+				setProcessedVideos(dashboardData.processed_videos);
+
+				// If processed_videos contains a video ID, fetch its content
+				if (dashboardData.processed_videos) {
+					const contentResponse = await fetch(
+						`http://20.244.84.131:3000/api/generate_content?video_id=${dashboardData.processed_videos}`,
+					);
+					const contentData = await contentResponse.json();
+
+					if (contentData.status === "success") {
+						setLatestVideo(contentData.metaData);
+						setLatestData(contentData);
+					}
 				}
 
-				setNewUser(dashboardData.new_user);
-				if (dashboardData.unprocessed_videos) {
-					setUnprocessedVideos(dashboardData.unprocessed_videos);
-				}
-				setProcessedVideos(dashboardData.processed_videos);
-				setLatestData(latestData);
 				setLoading(false);
 			} catch (error) {
 				console.error("Error fetching dashboard data:", error);
@@ -119,7 +122,7 @@ const Dashboard = () => {
 		window.location.href = `/dashboard/videos/${videoId}`;
 	};
 
-	if (loading || !latestData) {
+	if (loading) {
 		return (
 			<div className="flex w-full items-center justify-center h-screen gap-4">
 				<Loader2 className="animate-spin" />
@@ -144,13 +147,23 @@ const Dashboard = () => {
 		<div className="p-4 w-full">
 			<h1 className="text-2xl font-bold mb-4">Dashboard</h1>
 			{processedVideos === null && !latestVideo && (
-				<div className="text-gray-600 mb-4 max-w-md space-y-2">
-					<ScanEye />
-					<p>
-						We're constantly watching your YouTube channel. We'll
-						process your videos automatically as soon as you upload
-						them.
-					</p>
+				<div className="flex items-center justify-center my-20 max-w-2xl mx-auto gap-20">
+					<Image
+						src={handIllustration}
+						alt="hand illustration"
+						className="w-[200px]"
+					/>
+					<div className="space-y-2">
+						<h2 className="font-bold text-xl md:text-2xl">
+							You're all setup!
+						</h2>
+						<p className="text-black/80">
+							We're constantly watching your YouTube channel.
+							We'll process your videos automatically as soon as
+							you upload them. In the mean time, you can generate
+							content for your latest video.
+						</p>
+					</div>
 				</div>
 			)}
 			{latestVideo && (
