@@ -2,14 +2,16 @@
 
 import Footer from "@/components/Footer";
 import { WobbleCardDemo } from "@/components/WobbleCardDemo";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { HeroHighlight, Highlight } from "@/components/ui/hero-highlight";
 import { Input } from "@/components/ui/input";
 import { ViewContainer } from "@/components/ui/view-container";
 import { Noise } from "@/components/ui/wobble-card";
+import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useAtom } from "jotai";
 import { BookHeart, Megaphone, NotebookPen } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { youtubeLinkAtom } from "./states";
@@ -99,7 +101,7 @@ export default function Home() {
 						We generate a lot of content like blogs, tweets, and
 						other stuff using your YouTube video.
 					</motion.p>
-					<motion.form
+					<motion.div
 						initial={{
 							opacity: 0,
 							y: 20,
@@ -113,22 +115,18 @@ export default function Home() {
 							delay: 0.3,
 							ease: [0.4, 0.0, 0.2, 1],
 						}}
-						onSubmit={handleSubmit}
-						className="w-full max-w-lg mx-auto"
+						className="mx-auto w-fit"
 					>
-						<div className="flex flex-col sm:flex-row gap-4">
-							<Input
-								type="text"
-								placeholder="Enter YouTube video link"
-								value={youtubeLink}
-								onChange={e => setYoutubeLink(e.target.value)}
-								className="flex-grow"
-							/>
-							<Button type="submit" className="w-full sm:w-auto">
-								Generate Content
-							</Button>
-						</div>
-					</motion.form>
+						<Link
+							href="/sign-up"
+							className={cn(
+								buttonVariants({ variant: "default" }),
+								"mx-auto",
+							)}
+						>
+							Get Started
+						</Link>
+					</motion.div>
 				</ViewContainer>
 			</HeroHighlight>
 			<ViewContainer>
