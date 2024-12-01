@@ -7,6 +7,8 @@ import saveToDb from "../utils/saveToDb";
 async function getContent(videoId: string) {
     let videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
 
+    console.log(`Reached get content with ${videoId}`);
+
     const transcriptResult = await getTranscript(videoUrl);
     if (transcriptResult.success && transcriptResult.transcript) {
         const transcript = transcriptResult.transcript;
