@@ -114,6 +114,9 @@ export default function VideoPage({ params }: { params: { videoId: string } }) {
 						uploadDate={VIDEO_DATA.uploadDate}
 						viewCount={VIDEO_DATA.viewCount}
 						likes={VIDEO_DATA.likes}
+						isBlogGenerated={false}
+						isTweetGenerated={true}
+						isLinkedinGenerated={true}
 					/>
 				</div>
 
