@@ -1,13 +1,13 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import * as dotenv from 'dotenv';
-dotenv.config();
+import { truncateText } from './utils';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 export async function generateLinkedinPosts(transcript: string, videoUrl: string) {
     const prompt = `Create 1 professional LinkedIn post about this video transcript. Include the video URL ${videoUrl} in the post.
 
-  Video transcript: ${transcript}
+  Video transcript: ${truncateText(transcript)}
 
   Requirements:
   - Start with powerful professional hook

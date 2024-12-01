@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import * as dotenv from 'dotenv';
+import { truncateText } from './utils';
 
 dotenv.config();
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
@@ -7,7 +8,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 export async function generateBlogs(transcript: string, videoUrl: string) {
     const prompt = `Create 1 blog post about this video transcript. Include the video URL ${videoUrl} in the blog.
   
-  Video transcript: ${transcript}
+  Video transcript: ${truncateText(transcript)}
   
   Requirements:
   - SEO-optimized 300-400 word post

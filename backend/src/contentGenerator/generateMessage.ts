@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { truncateText } from './utils';
 
 export async function generateAnnouncementMessage(
     transcript: string,
@@ -14,7 +15,7 @@ export async function generateAnnouncementMessage(
         const prompt = `
       Generate a short, engaging announcement message for a content creator's community (like Discord) 
       to promote their new video. Use this video transcript to understand the content: 
-      "${transcript}"
+      "${truncateText(transcript)}"
       
       The message should:
       1. Be exciting and create curiosity
