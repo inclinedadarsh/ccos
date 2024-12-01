@@ -40,6 +40,7 @@ const getLatestVideos = async (channelId: string, maxResults: number = 5) => {
                 return {
                     title: snippet.title,
                     link: `https://www.youtube.com/watch?v=${video.id}`,
+                    videoId: video.id,
                     thumbnailUrl: snippet.thumbnails?.maxres?.url || snippet.thumbnails?.medium?.url || null,
                     likes: stats.likeCount || "N/A",
                     views: stats.viewCount,

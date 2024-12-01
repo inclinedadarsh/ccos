@@ -89,6 +89,8 @@ app.post("/api/new-user", async (c) => {
             throw new Error("Unable to get channelID : /api/new-user");
         }
 
+        // triggerKestraFlow(email, server_hook, personal_hook, yotube_channel_link);
+
         return c.json({
             status: "success",
             ...data,
