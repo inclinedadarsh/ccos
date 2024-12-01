@@ -67,3 +67,117 @@
 		@apply bg-background text-foreground;
 	}
 }
+
+/* Markdown Styles */
+.markdown {
+	@apply text-gray-800 leading-relaxed w-full;
+}
+
+/* Headings */
+.markdown h1 {
+	@apply text-3xl font-bold mb-6 mt-8;
+}
+
+.markdown h2 {
+	@apply text-2xl font-bold mb-4 mt-6;
+}
+
+.markdown h3 {
+	@apply text-xl font-bold mb-3 mt-5;
+}
+
+.markdown h4 {
+	@apply text-lg font-bold mb-2 mt-4;
+}
+
+/* Paragraphs and spacing */
+.markdown p {
+	@apply mb-4;
+}
+
+/* Lists */
+.markdown ul,
+.markdown ol {
+	@apply mb-4 ml-6;
+}
+
+.markdown li {
+	@apply mb-1;
+}
+
+.markdown ul li {
+	@apply list-disc;
+}
+
+.markdown ol li {
+	@apply list-decimal;
+}
+
+/* Links */
+.markdown a {
+	@apply text-blue-600 hover:text-blue-800 underline;
+}
+
+/* Blockquotes */
+.markdown blockquote {
+	@apply pl-4 border-l-4 border-gray-300 italic my-4 text-gray-600;
+}
+
+/* Code blocks */
+.markdown pre {
+	@apply bg-gray-900 rounded-md p-4 my-4 overflow-auto text-gray-100;
+}
+
+.markdown code {
+	@apply bg-gray-900 text-gray-100 rounded px-1.5 py-0.5 font-mono text-sm;
+}
+
+/* Syntax highlighting for code blocks */
+.markdown pre code {
+	@apply block p-0 bg-transparent text-inherit;
+}
+
+/* Optional: Add specific syntax highlighting colors */
+.markdown .keyword {
+	@apply text-purple-400;
+}
+
+.markdown .string {
+	@apply text-green-400;
+}
+
+.markdown .comment {
+	@apply text-gray-500;
+}
+
+.markdown .function {
+	@apply text-blue-400;
+}
+
+.markdown .number {
+	@apply text-orange-400;
+}
+
+/* Tables */
+.markdown table {
+	@apply w-full border-collapse my-4;
+}
+
+.markdown th,
+.markdown td {
+	@apply border border-gray-300 px-4 py-2;
+}
+
+.markdown th {
+	@apply bg-gray-100 font-bold;
+}
+
+/* Horizontal rule */
+.markdown hr {
+	@apply my-8 border-t border-gray-300;
+}
+
+/* Images */
+.markdown img {
+	@apply max-w-full h-auto rounded-lg my-4;
+}

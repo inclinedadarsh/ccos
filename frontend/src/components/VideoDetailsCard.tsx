@@ -1,5 +1,4 @@
-import { SiYoutube } from "@icons-pack/react-simple-icons";
-import { Calendar, Eye, ThumbsUp } from "lucide-react";
+import { BadgeCheck, BadgeX, Calendar, Eye, ThumbsUp } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -13,6 +12,9 @@ interface VideoDetailsCardProps {
 	uploadDate: string;
 	viewCount: number;
 	likes: number;
+	isBlogGenerated: boolean;
+	isTweetGenerated: boolean;
+	isLinkedinGenerated: boolean;
 }
 
 export function VideoDetailsCard({
@@ -25,9 +27,12 @@ export function VideoDetailsCard({
 	uploadDate,
 	viewCount,
 	likes,
+	isBlogGenerated,
+	isTweetGenerated,
+	isLinkedinGenerated,
 }: VideoDetailsCardProps) {
 	return (
-		<div className="bg-white rounded-lg shadow-lg overflow-hidden border border-border">
+		<div className="w-full bg-white rounded-lg shadow-lg overflow-hidden border border-border">
 			<div className="flex flex-col lg:flex-row">
 				<div className="w-full lg:w-1/2 p-4">
 					<Image
@@ -84,6 +89,48 @@ export function VideoDetailsCard({
 						>
 							{channelName}
 						</Link>
+					</div>
+
+					<div className="flex flex-col space-y-2 text-gray-600">
+						<span className="flex items-center gap-2">
+							{isBlogGenerated ? (
+								<BadgeCheck
+									className="text-green-500"
+									size={20}
+								/>
+							) : (
+								<BadgeX className="text-red-500" size={20} />
+							)}
+							{isBlogGenerated
+								? "Blog has been generated!"
+								: "Blog has not been generated yet"}
+						</span>
+						<span className="flex items-center gap-2">
+							{isTweetGenerated ? (
+								<BadgeCheck
+									className="text-green-500"
+									size={20}
+								/>
+							) : (
+								<BadgeX className="text-red-500" size={20} />
+							)}
+							{isTweetGenerated
+								? "Tweet has been generated!"
+								: "Tweet has not been generated yet"}
+						</span>
+						<span className="flex items-center gap-2">
+							{isLinkedinGenerated ? (
+								<BadgeCheck
+									className="text-green-500"
+									size={20}
+								/>
+							) : (
+								<BadgeX className="text-red-500" size={20} />
+							)}
+							{isLinkedinGenerated
+								? "LinkedIn post has been generated!"
+								: "LinkedIn post has not been generated yet"}
+						</span>
 					</div>
 				</div>
 			</div>

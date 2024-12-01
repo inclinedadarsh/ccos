@@ -92,7 +92,9 @@ export default function RootLayout({
 					</SignedIn>
 				</SidebarBody>
 			</Sidebar>
-			{children}
+			<div className="w-full min-h-screen overflow-y-scroll">
+				{children}
+			</div>
 		</div>
 	);
 }

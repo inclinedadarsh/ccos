@@ -87,6 +87,7 @@ export default function VideoPage() {
 					likes: Number.parseInt(data.likes),
 					uploadDate: data.publishDate,
 				});
+				console.log(JSON.stringify(data));
 			} catch (error) {
 				console.error("Error:", error);
 				toast.error("Failed to fetch video information");
