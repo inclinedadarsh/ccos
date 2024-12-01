@@ -1,7 +1,11 @@
 "use client";
+import { errorAtom, loadingAtom, newUserAtom } from "@/app/states";
 import NewUser from "@/components/NewUser";
 import UnprocessedVideos from "@/components/UnprocessedVideos";
-import { useState } from "react";
+import { useClerk } from "@clerk/nextjs";
+import { useAtom } from "jotai";
+import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const videos = [
 	{
@@ -72,7 +76,60 @@ const videos = [
 ];
 
 const Dashboard = () => {
-	const [newUser, setNewUser] = useState(false);
+	const { session } = useClerk();
+	const [newUser, setNewUser] = useAtom(newUserAtom);
+	const [loading, setLoading] = useAtom(loadingAtom);
+	const [error, setError] = useAtom(errorAtom);
+
+	useEffect(() => {
+		const fetchNewUserStatus = async () => {
+			try {
+				if (!session) {
+					return;
+				}
+
+				const token = await session.getToken();
+				const response = await fetch(
+					"http://20.244.84.131:3000/api/dashboard",
+					{
+						headers: {
+							Authorization: `${token}`,
+						},
+					},
+				);
+				const data = await response.json();
+				if (data.status === "fail") {
+					throw new Error("Failed to fetch new user status");
+				}
+				setNewUser(data.new_user);
+				console.log(data);
+			} catch (error) {
+				console.error("Error fetching new user status:", error);
+				setError(true);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchNewUserStatus();
+	}, [session, setNewUser, setLoading, setError]);
+
+	if (loading) {
+		return (
+			<div className="flex w-full items-center justify-center h-screen gap-4">
+				<Loader2 className="animate-spin" />
+				Hang on tight, we are processing your videos...
+			</div>
+		);
+	}
+
+	if (error) {
+		return (
+			<div className="flex w-full items-center justify-center h-screen">
+				Something went wrong, please try again later.
+			</div>
+		);
+	}
 
 	if (newUser) {
 		return <NewUser />;

@@ -29,6 +29,9 @@ export const youtubeLinkAtom = atom("");
 
 // Dashboard-related atoms
 export const newUserAtom = atom(false);
-export const discordWebhook1Atom = atom("");
-export const discordWebhook2Atom = atom("");
+export const discordPersonalHookAtom = atom<string>("");
+export const discordServerHookAtom = atom<string>("");
 export const youtubeChannelAtom = atom("");
+
+export const loadingAtom = atom(true);
+export const errorAtom = atom(false);
