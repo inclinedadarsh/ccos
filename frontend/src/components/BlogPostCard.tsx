@@ -1,5 +1,5 @@
-import { Button, buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Copy, RotateCcw } from "lucide-react";
 import { BookMarked } from "lucide-react";
 
@@ -35,11 +35,33 @@ export function BlogPostCard({
 				</div>
 			) : (
 				<div className="flex flex-col flex-1">
-					<textarea
-						value={post}
-						onChange={e => onPostChange(e.target.value)}
-						className="bg-gray-50 p-4 border-border border-2 border-dashed rounded-md flex-1 min-h-[150px] resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-					/>
+					<Tabs defaultValue="text" className="flex-1 flex flex-col">
+						<TabsList className="">
+							<TabsTrigger value="text" className="grow">
+								Text
+							</TabsTrigger>
+							<TabsTrigger value="preview" className="grow">
+								Preview
+							</TabsTrigger>
+						</TabsList>
+						<TabsContent
+							value="text"
+							className="flex-1 flex flex-col"
+						>
+							<textarea
+								value={post}
+								onChange={e => onPostChange(e.target.value)}
+								className="bg-gray-50 p-4 border-border border-2 border-dashed rounded-md flex-1 min-h-[150px] resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+							/>
+						</TabsContent>
+						<TabsContent value="preview" className="flex-1">
+							<div className="bg-gray-50 p-4 border-border border-2 border-dashed rounded-md h-full">
+								<p className="text-gray-600">
+									Preview will appear here
+								</p>
+							</div>
+						</TabsContent>
+					</Tabs>
 					<div className="mt-6 flex items-center gap-3">
 						<Button
 							variant="outline"
