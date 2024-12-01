@@ -130,8 +130,9 @@ export default function Home() {
 						}}
 						className="text-lg md:text-xl text-center max-w-2xl mx-auto"
 					>
-						We generate a lot of content like blogs, tweets, and
-						other stuff using your YouTube video.
+						CCoS is an open-source AI platform that turns the
+						challenge of content distribution into a seamless
+						workflow.
 					</motion.p>
 					<motion.div
 						initial={{
