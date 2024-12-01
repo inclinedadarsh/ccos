@@ -20,24 +20,6 @@ export const metadata: Metadata = {
 	description: "A platform for creating content on steroids",
 };
 
-const navItems = [
-	{
-		name: "Home",
-		link: "/",
-		icon: <Home className="h-4 w-4 text-neutral-500 dark:text-white" />,
-	},
-	{
-		name: "Features",
-		link: "/about",
-		icon: <User className="h-4 w-4 text-neutral-500 dark:text-white" />,
-	},
-	{
-		name: "Try it out",
-		link: "/contact",
-		icon: <Sparkles className="h-4 w-4 text-neutral-500 dark:text-white" />,
-	},
-];
-
 export default function RootLayout({
 	children,
 }: Readonly<{
@@ -49,7 +31,6 @@ export default function RootLayout({
 				<body
 					className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased`}
 				>
-					<FloatingNav navItems={navItems} />
 					{children}
 					<Toaster richColors theme="light" />
 				</body>

@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import { HeroScrollDemo } from "@/components/HeroScrollDemo";
 import { WobbleCardDemo } from "@/components/WobbleCardDemo";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { FloatingNav } from "@/components/ui/floating-navbar";
 import { HeroHighlight, Highlight } from "@/components/ui/hero-highlight";
 import { Input } from "@/components/ui/input";
 import { ViewContainer } from "@/components/ui/view-container";
@@ -11,7 +12,14 @@ import { Noise } from "@/components/ui/wobble-card";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useAtom } from "jotai";
-import { BookHeart, Megaphone, NotebookPen } from "lucide-react";
+import {
+	BookHeart,
+	HomeIcon,
+	Megaphone,
+	NotebookPen,
+	Sparkles,
+	User,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -38,6 +46,28 @@ export default function Home() {
 		return youtubeRegex.test(url);
 	};
 
+	const navItems = [
+		{
+			name: "Home",
+			link: "/",
+			icon: (
+				<HomeIcon className="h-4 w-4 text-neutral-500 dark:text-white" />
+			),
+		},
+		{
+			name: "Features",
+			link: "/about",
+			icon: <User className="h-4 w-4 text-neutral-500 dark:text-white" />,
+		},
+		{
+			name: "Try it out",
+			link: "/contact",
+			icon: (
+				<Sparkles className="h-4 w-4 text-neutral-500 dark:text-white" />
+			),
+		},
+	];
+
 	const features = [
 		{
 			title: "Blog",
@@ -58,6 +88,7 @@ export default function Home() {
 
 	return (
 		<main className="">
+			<FloatingNav navItems={navItems} />
 			<HeroHighlight className="">
 				<ViewContainer className="space-y-10">
 					<motion.h1
