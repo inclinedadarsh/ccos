@@ -26,7 +26,9 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<ClerkProvider>
+		<ClerkProvider
+			publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+		>
 			<html lang="en">
 				<body
 					className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased`}
