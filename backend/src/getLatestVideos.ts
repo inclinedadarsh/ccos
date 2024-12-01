@@ -31,6 +31,8 @@ const getLatestVideos = async (channelId: string, maxResults: number = 5) => {
 
             const videoDetails = detailsResponse.data.items;
 
+            let channelLogo = await getChannelLogo(channelId);
+
             const latestVideos = videoDetails.map((video: any) => {
                 const snippet = video.snippet;
                 const stats = video.statistics;
@@ -38,13 +40,13 @@ const getLatestVideos = async (channelId: string, maxResults: number = 5) => {
                 return {
                     title: snippet.title,
                     link: `https://www.youtube.com/watch?v=${video.id}`,
-                    thumbnailUrl: snippet.thumbnails.high.url,
+                    thumbnailUrl: snippet.thumbnails?.maxres?.url || snippet.thumbnails?.medium?.url || null,
                     likes: stats.likeCount || "N/A",
                     views: stats.viewCount,
                     channel: {
                         name: snippet.channelTitle,
                         link: `https://www.youtube.com/channel/${snippet.channelId}`,
-                        imageUrl: snippet.thumbnails.default.url,
+                        imageUrl: channelLogo,
                     },
                     publishDate: snippet.publishedAt,
                 };
@@ -74,5 +76,19 @@ const getLatestVideos = async (channelId: string, maxResults: number = 5) => {
         console.error("Error fetching latest videos:", (error as Error).message);
     }
 };
+
+async function getChannelLogo(channelId: string) {
+    const channelApiUrl = "https://www.googleapis.com/youtube/v3/channels";
+
+    const paramsForChannel = {
+        id: channelId,
+        key: process.env.API_KEY,
+        part: "snippet",
+    };
+
+    const response = await axios.get(channelApiUrl, { params: paramsForChannel });
+
+    return response.data.items[0].snippet.thumbnails.high.url;
+}
 
 export default getLatestVideos;
