@@ -6,6 +6,7 @@ import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { SignedIn, UserButton } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
+import { SiLinkedin, SiX } from "@icons-pack/react-simple-icons";
 import { motion } from "framer-motion";
 import {
 	BookHeart,
@@ -31,17 +32,17 @@ export default function RootLayout({
 			),
 		},
 		{
-			label: "Social Content",
-			href: "/dashboard/social-content",
+			label: "Tweets (X)",
+			href: "/dashboard/tweets",
 			icon: (
-				<BookHeart className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+				<SiX className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
 			),
 		},
 		{
-			label: "Blog Content",
-			href: "/dashboard/blog-content",
+			label: "LinkedIn",
+			href: "/dashboard/linkedin",
 			icon: (
-				<BookMarked className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+				<SiLinkedin className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
 			),
 		},
 		{
